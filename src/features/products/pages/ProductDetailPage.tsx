@@ -23,6 +23,7 @@ import { toast } from 'sonner';
 import ReviewSection from '../components/ReviewSection';
 import ProductCard from '../components/ProductCard';
 import { fetchProducts } from '../productSlice';
+import { addToRecentlyViewed } from '../recentlyViewedSlice';
 
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { db } from '../../../config/firebase';
@@ -82,6 +83,7 @@ const ProductDetailPage = () => {
         if (foundProduct) {
             setProduct(foundProduct);
             setMainImage(foundProduct.image || '');
+            dispatch(addToRecentlyViewed(foundProduct));
             setLoading(false);
         } else {
             setLoading(false);
@@ -228,8 +230,11 @@ const ProductDetailPage = () => {
                                 initial={{ opacity: 0.5, scale: 1.1 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ duration: 0.4 }}
-                                src={mainImage}
+                                src={mainImage || 'https://images.unsplash.com/photo-1560393464-5c69a73c5770?q=80&w=800&auto=format&fit=crop'}
                                 alt={product.title}
+                                onError={(e) => {
+                                    (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1560393464-5c69a73c5770?q=80&w=800&auto=format&fit=crop';
+                                }}
                                 className="w-full aspect-[3/4] object-cover"
                             />
 
@@ -261,7 +266,14 @@ const ProductDetailPage = () => {
                                         onClick={() => setMainImage(img)}
                                         className={`w-20 h-20 md:w-auto md:aspect-square flex-shrink-0 rounded-2xl overflow-hidden border-2 transition-all p-1 ${mainImage === img ? 'border-indigo-600 bg-indigo-50 shadow-lg' : 'border-gray-100 bg-white'}`}
                                     >
-                                        <img src={img} className="w-full h-full object-cover rounded-xl" alt="thumbnail" />
+                                        <img
+                                            src={img || 'https://images.unsplash.com/photo-1560393464-5c69a73c5770?q=80&w=800&auto=format&fit=crop'}
+                                            className="w-full h-full object-cover rounded-xl"
+                                            alt="thumbnail"
+                                            onError={(e) => {
+                                                (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1560393464-5c69a73c5770?q=80&w=800&auto=format&fit=crop';
+                                            }}
+                                        />
                                     </button>
                                 ))}
                             </div>

@@ -10,6 +10,7 @@ import { Toaster } from 'sonner';
 // Lazy load pages
 // Lazy load pages
 const HomePage = lazy(() => import('./pages/HomePage'));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 const ProductListingPage = lazy(() => import('./features/products/pages/ProductListingPage'));
 const CartPage = lazy(() => import('./pages/CartPage'));
 const WishlistPage = lazy(() => import('./pages/WishlistPage'));
@@ -64,7 +65,7 @@ function App() {
                                 <Route path="admin/edit-product/:id" element={<AdminRoute><EditProductPage /></AdminRoute>} />
 
                                 {/* Add more routes here */}
-                                <Route path="*" element={<div className="p-10 text-center">404 - Not Found</div>} />
+                                <Route path="*" element={<NotFoundPage />} />
                             </Route>
                         </Routes>
                     </Suspense>

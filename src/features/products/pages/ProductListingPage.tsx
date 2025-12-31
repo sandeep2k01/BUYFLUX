@@ -21,7 +21,18 @@ const ProductListingPage = () => {
     // Sync URL category param with Redux filter
     useEffect(() => {
         if (category) {
-            const formattedCat = category.charAt(0).toUpperCase() + category.slice(1);
+            // Mapping for display: convert 'kids & toys' to 'Kids & Toys'
+            const displayMap: { [key: string]: string } = {
+                'men': 'Men',
+                'women': 'Women',
+                'kids & toys': 'Kids & Toys',
+                'gadgets & accessories': 'Gadgets & Accessories',
+                'anime': 'Anime Collection',
+                'home appliances': 'Home Appliances',
+                'beauty & skincare': 'Beauty & Skincare',
+                'food & grocery': 'Food & Grocery'
+            };
+            const formattedCat = displayMap[category.toLowerCase()] || category;
             dispatch(setCategoryFromUrl(formattedCat));
         } else {
             dispatch(setCategoryFromUrl(null));
@@ -33,7 +44,7 @@ const ProductListingPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative min-h-screen">
             {/* Breadcrumbs */}
             <div className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-6 flex items-center gap-2">
-                Home <span className="opacity-30">/</span> Products {category && <><span className="opacity-30">/</span> <span className="text-indigo-600 uppercase">{category}</span></>}
+                Home <span className="opacity-30">/</span> Products {category && <><span className="opacity-30">/</span> <span className="text-indigo-600 uppercase">{category.replace(/%20/g, ' ')}</span></>}
             </div>
 
             <div className="flex flex-col md:flex-row gap-8">
@@ -65,8 +76,8 @@ const ProductListingPage = () => {
                     {/* Sorting Header */}
                     <div className="flex justify-between items-center mb-10 pb-4 border-b border-gray-100">
                         <div>
-                            <h1 className="text-2xl font-black text-gray-900 tracking-tighter uppercase italic">
-                                {category ? category : 'Collection'}
+                            <h1 className="text-2xl md:text-3xl font-black text-gray-900 tracking-tighter uppercase italic">
+                                {category ? category.replace(/%20/g, ' ').toUpperCase() : 'Premium Collection'}
                             </h1>
                             <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1">
                                 {filteredItems.length} curated pieces
@@ -76,7 +87,7 @@ const ProductListingPage = () => {
                             <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest hidden sm:inline">Sort:</span>
                             <select
                                 onChange={(e) => dispatch(setSort(e.target.value))}
-                                className="text-xs font-black text-gray-900 border-none focus:ring-0 cursor-pointer bg-gray-50 px-4 py-2 rounded-xl focus:outline-none uppercase tracking-widest"
+                                className="text-xs font-black text-gray-900 border-none focus:ring-0 cursor-pointer bg-gray-50 px-4 py-2 rounded-xl focus:outline-none uppercase tracking-widest shadow-sm"
                             >
                                 <option value="recommended">Best Match</option>
                                 <option value="low-high">Price: Low</option>

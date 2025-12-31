@@ -250,10 +250,14 @@ const AddProductPage = () => {
                                     value={formData.category}
                                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                                 >
-                                    <option>Men</option>
-                                    <option>Women</option>
-                                    <option>Kids</option>
-                                    <option>Beauty</option>
+                                    <option value="Men">Men</option>
+                                    <option value="Women">Women</option>
+                                    <option value="Kids">Kids</option>
+                                    <option value="Beauty & Skincare">Beauty & Skincare</option>
+                                    <option value="Gadgets">Gadgets</option>
+                                    <option value="Anime">Anime</option>
+                                    <option value="Food & Grocery">Food & Grocery</option>
+                                    <option value="Home Appliances">Home Appliances</option>
                                 </select>
                             </div>
                         </div>

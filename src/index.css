@@ -2,23 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  body {
-    @apply antialiased text-gray-900 bg-white;
-  }
+:root {
+    font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
 }
 
-@layer utilities {
-  .animate-slide-right {
-    animation: slideRight 0.3s ease-out forwards;
-  }
+body {
+    margin: 0;
+    min-width: 320px;
+    min-height: 100vh;
+    background-color: #ffffff;
+}
 
-  @keyframes slideRight {
-    from {
-      transform: translateX(-100%);
+/* Custom Utilities */
+@layer utilities {
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
     }
-    to {
-      transform: translateX(0);
+
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
     }
-  }
+}
+
+.font-inter {
+    font-family: 'Inter', sans-serif;
 }

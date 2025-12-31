@@ -1,98 +1,180 @@
-import { motion } from 'framer-motion';
+import { useEffect } from 'react';
 import Hero from '../components/home/Hero';
 import CategoryScroll from '../components/home/CategoryScroll';
-import FeaturedProducts from '../components/home/FeaturedProducts';
+import ProductHorizontalScroll from '../components/home/ProductHorizontalScroll';
+import RecentlyViewed from '../components/home/RecentlyViewed';
+import { useAppSelector, useAppDispatch } from '../store/hooks';
+import { fetchProducts } from '../features/products/productSlice';
+import { Shield, Truck, Zap } from 'lucide-react';
 
 const HomePage = () => {
+    const dispatch = useAppDispatch();
+    const allProducts = useAppSelector((state) => state.products.items);
+
+    useEffect(() => {
+        // Essential: Fetch products on mount to ensure homepage sections are populated
+        dispatch(fetchProducts());
+    }, [dispatch]);
+
+    // Categories Filtering
+    const menProducts = allProducts.filter(p => p.category === 'Men').slice(0, 15);
+    const womenProducts = allProducts.filter(p => p.category === 'Women').slice(0, 15);
+    const kidProducts = allProducts.filter(p => p.category === 'Kids').slice(0, 15);
+    const beautyProducts = allProducts.filter(p => p.category === 'Beauty & Skincare').slice(0, 15);
+    const groceryProducts = allProducts.filter(p => p.category === 'Food & Grocery').slice(0, 15);
+
+    // 4 NEW Dedicated Categories
+    const animeProducts = allProducts.filter(p => p.category === 'Anime').slice(0, 15);
+
+    const applianceProducts = allProducts.filter(p => p.category === 'Home Appliances').slice(0, 15);
+    const gadgetProducts = allProducts.filter(p => p.category === 'Gadgets').slice(0, 15);
+
     const valueProps = [
         {
-            title: "Quality & Style",
-            desc: "Curated collection of premium brands and trendy designs.",
-            icon: (
-                <svg className="w-8 h-8 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-            )
+            title: "Premium Quality",
+            desc: "Every product is handpicked for its superior craft and style.",
+            icon: <Shield className="w-8 h-8" />
         },
         {
-            title: "Fast Delivery",
-            desc: "Quick shipping on all orders with real-time tracking.",
-            icon: (
-                <svg className="w-8 h-8 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-            )
+            title: "Express Shipping",
+            desc: "Get your favorites delivered to your doorstep in 24-48 hours.",
+            icon: <Truck className="w-8 h-8" />
         },
         {
-            title: "24/7 Support",
-            desc: "Our dedicated support team is here to help you anytime.",
-            icon: (
-                <svg className="w-8 h-8 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
-                </svg>
-            )
+            title: "Secure Checkout",
+            desc: "Your data is protected with 256-bit military-grade encryption.",
+            icon: <Zap className="w-8 h-8" />
         }
     ];
 
-    const containerVariants = {
-        hidden: { opacity: 0 },
-        visible: {
-            opacity: 1,
-            transition: { staggerChildren: 0.2 }
-        }
-    } as any;
-
-    const itemVariants = {
-        hidden: { opacity: 0, scale: 0.8 },
-        visible: {
-            opacity: 1,
-            scale: 1,
-            transition: { duration: 0.5, ease: "easeOut" }
-        }
-    } as any;
-
     return (
-        <div className="flex flex-col min-h-screen">
+        <div className="flex flex-col min-h-screen bg-white">
             <Hero />
-            <CategoryScroll />
-            <FeaturedProducts />
 
-            {/* Value Props Section */}
-            <section className="bg-gray-900 py-32 overflow-hidden">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <motion.div
-                        variants={containerVariants}
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true, margin: "-100px" }}
-                        className="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-20"
-                    >
+            <div className="z-20">
+                <CategoryScroll />
+            </div>
+
+            <main>
+                {/* 1. Men's Fashion */}
+                {menProducts.length > 0 && (
+                    <section className="bg-white py-4 md:py-8">
+                        <ProductHorizontalScroll
+                            title="Elite Men's Fashion"
+                            products={menProducts}
+                            category="Men"
+                        />
+                    </section>
+                )}
+
+                {/* 2. Women's Styles */}
+                {womenProducts.length > 0 && (
+                    <section className="bg-gray-50/40 py-4 md:py-8 border-y border-gray-100">
+                        <ProductHorizontalScroll
+                            title="Supreme Women's Styles"
+                            products={womenProducts}
+                            category="Women"
+                        />
+                    </section>
+                )}
+
+                {/* 3. Kids' Adventure */}
+                {kidProducts.length > 0 && (
+                    <section className="bg-white py-4 md:py-8">
+                        <ProductHorizontalScroll
+                            title="Kids' Adventure & Style"
+                            products={kidProducts}
+                            category="Kids"
+                        />
+                    </section>
+                )}
+
+                {/* 4. Beauty & Skincare */}
+                {beautyProducts.length > 0 && (
+                    <section className="bg-pink-50/10 py-4 md:py-8 border-y border-pink-100/30">
+                        <ProductHorizontalScroll
+                            title="Beauty & Skincare Essentials"
+                            products={beautyProducts}
+                            category="Beauty & Skincare"
+                        />
+                    </section>
+                )}
+
+                {/* 5. Food & Grocery */}
+                {groceryProducts.length > 0 && (
+                    <section className="bg-white py-4 md:py-8">
+                        <ProductHorizontalScroll
+                            title="Fresh Food & Daily Grocery"
+                            products={groceryProducts}
+                            category="Food & Grocery"
+                        />
+                    </section>
+                )}
+
+                {/* 6. Anime */}
+                {animeProducts.length > 0 && (
+                    <section className="bg-indigo-50/10 py-4 md:py-8 border-y border-indigo-100/20">
+                        <ProductHorizontalScroll
+                            title="Exclusive Anime Merchandise"
+                            products={animeProducts}
+                            category="Anime"
+                        />
+                    </section>
+                )}
+
+                {/* 8. Home Appliances */}
+                {applianceProducts.length > 0 && (
+                    <section className="bg-white py-4 md:py-8">
+                        <ProductHorizontalScroll
+                            title="Modern Home & Kitchen Appliances"
+                            products={applianceProducts}
+                            category="Home Appliances"
+                        />
+                    </section>
+                )}
+
+                {/* 9. Gadgets */}
+                {gadgetProducts.length > 0 && (
+                    <section className="bg-blue-50/5 py-4 md:py-8 border-y border-blue-100/20">
+                        <ProductHorizontalScroll
+                            title="Next-Gen Tech & Gadgets"
+                            products={gadgetProducts}
+                            category="Gadgets"
+                        />
+                    </section>
+                )}
+
+                {/* Recently Viewed (Bottom) */}
+                <RecentlyViewed />
+            </main>
+
+            {/* Value Propositions */}
+            <section className="bg-gray-950 py-10 md:py-16 overflow-hidden relative">
+                <div className="absolute top-0 left-1/4 w-96 h-96 bg-indigo-600/10 rounded-full blur-[120px]" />
+                <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-600/10 rounded-full blur-[120px]" />
+
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div className="grid grid-cols-3 gap-6 md:gap-12 items-start">
                         {valueProps.map((prop, index) => (
-                            <motion.div
-                                key={index}
-                                variants={itemVariants}
-                                className="group relative"
-                            >
-                                <div className="absolute -inset-4 bg-indigo-500/5 rounded-[2rem] scale-95 group-hover:scale-100 opacity-0 group-hover:opacity-100 transition-all duration-500" />
-                                <div className="relative flex flex-col items-center md:items-start text-center md:text-left">
-                                    <div className="w-20 h-20 bg-indigo-600/10 rounded-3xl flex items-center justify-center mb-8 group-hover:bg-indigo-600 group-hover:rotate-12 transition-all duration-500 shadow-xl shadow-indigo-600/5">
-                                        <div className="group-hover:text-white group-hover:-rotate-12 transition-all duration-500">
-                                            {prop.icon}
-                                        </div>
+                            <div key={index} className="flex flex-col items-center text-center group">
+                                <div className="w-10 h-10 md:w-20 md:h-20 rounded-xl md:rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center mb-3 md:mb-8 group-hover:bg-indigo-600 group-hover:scale-110 transition-all duration-500 group-hover:shadow-[0_0_40px_rgba(79,70,229,0.3)]">
+                                    <div className="text-white scale-50 md:scale-125 transition-transform">
+                                        {prop.icon}
                                     </div>
-                                    <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter mb-4">
-                                        {prop.title}
-                                    </h3>
-                                    <p className="text-gray-400 font-medium leading-relaxed max-w-xs">
-                                        {prop.desc}
-                                    </p>
                                 </div>
-                            </motion.div>
+                                <h3 className="text-[7px] md:text-[14px] font-black text-white uppercase tracking-[0.1em] md:tracking-[0.2em] italic leading-tight px-1">
+                                    {prop.title}
+                                </h3>
+                                <p className="hidden md:block text-sm text-gray-400 font-medium leading-relaxed max-w-[280px] mt-4">
+                                    {prop.desc}
+                                </p>
+                            </div>
                         ))}
-                    </motion.div>
+                    </div>
                 </div>
             </section>
         </div>
+
     );
 };
 

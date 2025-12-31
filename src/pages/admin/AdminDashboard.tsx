@@ -103,18 +103,37 @@ const AdminDashboard = () => {
         toast.loading("Populating Premium Store...", { id: 'seed' });
         try {
             const premiumProducts = [
+                // Anime
+                { title: "Naruto Sage Mode Figure", brand: "Bandai", price: 3499, category: "Anime", description: "Highly detailed Naruto action figure in Sage Mode.", image: "https://images.unsplash.com/photo-1611001716885-b3402558a62b?auto=format&fit=crop&w=800", rating: { rate: 4.9, count: 420 }, discountPercentage: 10 },
+                { title: "Akatsuki Cloud Hoodie", brand: "Hidden Leaf", price: 2899, category: "Anime", description: "Premium cotton hoodie with Akatsuki embroidery.", image: "https://images.unsplash.com/photo-1618331812471-de3230bc5a4e?auto=format&fit=crop&w=800", rating: { rate: 4.8, count: 850 }, discountPercentage: 15 },
+                { title: "Itachi Crow Graphic Tee", brand: "Grand Line", price: 1299, category: "Anime", description: "100% cotton tee with Itachi graphic.", image: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800", rating: { rate: 4.7, count: 320 }, discountPercentage: 5 },
+
+                // Men
                 { title: "Essential Oversized Tee", brand: "Modern Men", price: 1299, category: "Men", description: "Premium heavy cotton t-shirt with a relaxed fit.", image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800", rating: { rate: 4.8, count: 240 }, discountPercentage: 10 },
-                { title: "Slim Fit Indigo Jeans", brand: "Denim Co", price: 3499, category: "Men", description: "Classic indigo denim with a hint of stretch for comfort.", image: "https://images.unsplash.com/photo-1542272604-787c3835535d?auto=format&fit=crop&w=800", rating: { rate: 4.6, count: 180 }, discountPercentage: 20 },
-                { title: "Urban Pro Sneakers", brand: "Swift", price: 5499, category: "Men", description: "Lightweight breathable sneakers for the modern city life.", image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800", rating: { rate: 4.9, count: 350 }, discountPercentage: 15 },
-                { title: "Legacy Chronograph Watch", brand: "Timepiece", price: 8999, category: "Men", description: "Elegant silver watch with multiple dials and leather strap.", image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800", rating: { rate: 4.7, count: 95 }, discountPercentage: 5 },
-                { title: "Heritage Leather Backpack", brand: "Traveler", price: 4299, category: "Men", description: "Durable leather backpack with laptop compartment.", image: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=800", rating: { rate: 4.5, count: 120 }, discountPercentage: 25 },
-                { title: "Aviator Classic Black", brand: "Ray-Style", price: 2999, category: "Beauty", description: "UV protection sunglasses with premium metal frame.", image: "https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&w=800", rating: { rate: 4.4, count: 88 }, discountPercentage: 30 },
-                { title: "Midnight Bloom Perfume", brand: "Essence", price: 6599, category: "Beauty", description: "Long-lasting floral fragrance for sophisticated evenings.", image: "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=800", rating: { rate: 4.9, count: 110 }, discountPercentage: 10 },
-                { title: "Military Bomber Jacket", brand: "Garrison", price: 5999, category: "Men", description: "Stylishly rugged bomber jacket for all-weather protection.", image: "https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?auto=format&fit=crop&w=800", rating: { rate: 4.7, count: 155 }, discountPercentage: 20 },
-                { title: "Organic Russet Potatoes", brand: "FarmFresh", price: 69, category: "Food & Grocery", description: "Freshly harvested organic russet potatoes. Perfect for mashing or frying.", image: "https://images.unsplash.com/photo-1518977676601-b53f02bad675?auto=format&fit=crop&w=800", rating: { rate: 4.8, count: 188 }, discountPercentage: 5 },
-                { title: "Pure Wildflower Honey", brand: "Henry's", price: 594, category: "Food & Grocery", description: "100% pure raw wildflower honey. Unfiltered and rich in antioxidants.", image: "https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=format&fit=crop&w=800", rating: { rate: 4.7, count: 135 }, discountPercentage: 14 },
-                { title: "Fresh Salmon Steak", brand: "OceanCatch", price: 1274, category: "Food & Grocery", description: "Premium quality fresh salmon steak. Rich in Omega-3 fatty acids.", image: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=800", rating: { rate: 4.9, count: 86 }, discountPercentage: 10 }
+                { title: "Classic Indigo Denim", brand: "Denim Co", price: 3499, category: "Men", description: "Vintage wash denim jacket with copper hardware.", image: "https://images.unsplash.com/photo-1576874620030-9b6e828f7312?auto=format&fit=crop&w=800", rating: { rate: 4.6, count: 180 }, discountPercentage: 20 },
+                { title: "Heritage Leather Backpack", brand: "Traveler", price: 6500, category: "Men", description: "Rugged water-resistant leather backpack for daily essentials.", image: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=800", rating: { rate: 4.7, count: 210 }, discountPercentage: 15 },
+
+                // Women
+                { title: "Silk Evening Gown", brand: "Vogue Aura", price: 8499, category: "Women", description: "Pure silk gown with elegant drape and finish.", image: "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=800", rating: { rate: 4.9, count: 110 }, discountPercentage: 15 },
+                { title: "Starlight Diamond Pendant", brand: "Orra Luxe", price: 15999, category: "Women", description: "18k white gold pendant with a certified 0.5ct diamond.", image: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=800", rating: { rate: 5.0, count: 42 }, discountPercentage: 10 },
+
+                // Beauty
+                { title: "Radiance Vitamin C Serum", brand: "GlowRx", price: 1899, category: "Beauty & Skincare", description: "Active Vitamin C for a bright, even skin tone.", image: "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=800", rating: { rate: 4.8, count: 1240 }, discountPercentage: 30 },
+                { title: "Hydrating Night Cream", brand: "Pure Bliss", price: 3200, category: "Beauty & Skincare", description: "Overnight recovery cream with hyaluronic acid.", image: "https://images.unsplash.com/photo-1556228570-419a7c27d530?auto=format&fit=crop&w=800", rating: { rate: 4.9, count: 560 }, discountPercentage: 15 },
+
+                // Food
+                { title: "Exotic Fruit Basket", brand: "FarmFresh", price: 1499, category: "Food & Grocery", description: "Handpicked organic seasonal exotic fruits.", image: "https://images.unsplash.com/photo-1610832958506-ee5636637671?auto=format&fit=crop&w=800", rating: { rate: 4.9, count: 420 }, discountPercentage: 5 },
+                { title: "Pure Wildflower Honey", brand: "Henry's", price: 594, category: "Food & Grocery", description: "100% pure raw wildflower honey. Unfiltered and rich in antioxidants.", image: "https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=format&fit=crop&w=800", rating: { rate: 4.9, count: 135 }, discountPercentage: 14 },
+
+                // Gadgets
+                { title: "Titan Gen 4 Watch", brand: "NovaTech", price: 3499, category: "Gadgets", description: "Premium smartwatch with always-on AMOLED display.", image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800", rating: { rate: 4.6, count: 860 }, discountPercentage: 15 },
+
+                // Kids
+                { title: "STEM Robotics Kit", brand: "EduPlay", price: 3499, category: "Kids", description: "Build and code your own robots.", image: "https://images.unsplash.com/photo-1587654780291-39c9404d746b?auto=format&fit=crop&w=800", rating: { rate: 4.9, count: 156 }, discountPercentage: 12 },
+                { title: "Hyper-Drift RC Car", brand: "TurboX", price: 1800, category: "Kids", description: "1:16 scale rechargeable drift car with LED lights.", image: "https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&w=800", rating: { rate: 4.5, count: 240 }, discountPercentage: 25 },
+                { title: "Soft Plush Bunny", brand: "SnuggleSafe", price: 999, category: "Kids", description: "The softest bunny friend for your little ones.", image: "https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?auto=format&fit=crop&w=800", rating: { rate: 5.0, count: 520 }, discountPercentage: 5 }
             ];
+
 
             for (const p of premiumProducts) {
                 if (stopSeedingRef.current) {

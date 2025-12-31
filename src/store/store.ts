@@ -5,6 +5,8 @@ import productsReducer from '../features/products/productSlice';
 import wishlistReducer from '../features/wishlist/wishlistSlice';
 import orderReducer from '../features/orders/orderSlice';
 
+import recentlyViewedReducer from '../features/products/recentlyViewedSlice';
+
 export const store = configureStore({
     reducer: {
         auth: authReducer,
@@ -12,6 +14,7 @@ export const store = configureStore({
         products: productsReducer,
         wishlist: wishlistReducer,
         orders: orderReducer,
+        recentlyViewed: recentlyViewedReducer,
     },
 });
 

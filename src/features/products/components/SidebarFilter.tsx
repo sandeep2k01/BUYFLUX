@@ -20,7 +20,9 @@ const SidebarFilter = ({ onClose }: { onClose?: () => void }) => {
     const filterLabel = useMemo(() => {
         const cat = filters.category?.toLowerCase() || '';
         if (cat === 'food & grocery') return 'Types';
-        if (cat === 'beauty') return 'Categories';
+        if (cat.includes('beauty')) return 'Categories';
+        if (cat === 'anime') return 'Series & Gear';
+        if (cat.includes('kids')) return 'Types';
         return 'Brands';
     }, [filters.category]);
 
@@ -46,15 +48,15 @@ const SidebarFilter = ({ onClose }: { onClose?: () => void }) => {
                     <input
                         type="range"
                         min="0"
-                        max="10000"
-                        step="100"
+                        max="100000"
+                        step="500"
                         value={filters.priceRange[1]}
                         onChange={(e) => dispatch(setPriceRange([0, parseInt(e.target.value)]))}
                         className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
                     />
                     <div className="flex justify-between text-xs text-gray-500 mt-2">
                         <span>₹0</span>
-                        <span>₹{filters.priceRange[1]}</span>
+                        <span>₹{filters.priceRange[1].toLocaleString()}</span>
                     </div>
                 </div>
             </div>
@@ -79,7 +81,7 @@ const SidebarFilter = ({ onClose }: { onClose?: () => void }) => {
                                         </svg>
                                     </div>
                                 </div>
-                                <span className="ml-3 text-sm text-gray-600 group-hover:text-indigo-600 transition-colors">
+                                <span className="ml-3 text-sm text-gray-600 group-hover:text-indigo-600 transition-colors uppercase tracking-tight font-medium">
                                     {brand}
                                 </span>
                             </label>
@@ -93,7 +95,7 @@ const SidebarFilter = ({ onClose }: { onClose?: () => void }) => {
             <div className="mt-8 pt-6 border-t border-gray-100">
                 <div className="flex flex-wrap gap-2">
                     {filters.selectedBrands.map(b => (
-                        <div key={b} className="bg-gray-100 text-gray-600 text-[10px] font-bold px-3 py-1 rounded-full flex items-center gap-1 uppercase tracking-tighter">
+                        <div key={b} className="bg-gray-100 text-gray-600 text-[9px] font-black px-3 py-1.5 rounded-full flex items-center gap-1 uppercase tracking-tighter">
                             {b}
                             <X className="w-3 h-3 cursor-pointer hover:text-red-500" onClick={() => dispatch(toggleBrand(b))} />
                         </div>
@@ -102,19 +104,9 @@ const SidebarFilter = ({ onClose }: { onClose?: () => void }) => {
             </div>
 
             <style>{`
-                .custom-scrollbar::-webkit-scrollbar {
-                    width: 4px;
-                }
-                .custom-scrollbar::-webkit-scrollbar-track {
-                    background: transparent;
-                }
-                .custom-scrollbar::-webkit-scrollbar-thumb {
-                    background: #e2e8f0;
-                    border-radius: 10px;
-                }
-                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-                    background: #cbd5e1;
-                }
+                .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+                .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+                .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
             `}</style>
         </div>
     );
