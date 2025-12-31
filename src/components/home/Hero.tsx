@@ -14,7 +14,7 @@ const Hero = () => {
                 delayChildren: 0.3
             }
         }
-    };
+    } as any;
 
     const itemVariants = {
         hidden: { opacity: 0, y: 30 },
@@ -23,7 +23,7 @@ const Hero = () => {
             y: 0,
             transition: { duration: 0.8, ease: "circOut" as any }
         }
-    };
+    } as any;
 
     return (
         <section className="relative w-full h-[600px] md:h-[700px] lg:h-[800px] bg-gray-900 overflow-hidden">

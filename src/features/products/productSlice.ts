@@ -10,7 +10,7 @@ const BEAUTY_BRANDS = ['Loreal', 'Maybelline', 'MAC', 'Estee Lauder', 'Clinique'
 const GROCERY_BRANDS = ['Amul', 'Nestle', 'Mother Dairy', 'ITC', 'Hindustan Unilever', 'P&G', 'Coca Cola', 'Pepsi', 'FarmFresh', 'Organic Tattva'];
 
 // For Food & Grocery specific types as requested: fresh, meat, vegetables, non-vegetables
-const GROCERY_TYPES = ['Fresh', 'Meat', 'Vegetables', 'Non-Vegetables', 'Dairy', 'Beverages', 'Snacks'];
+// const GROCERY_TYPES = ['Fresh', 'Meat', 'Vegetables', 'Non-Vegetables', 'Dairy', 'Beverages', 'Snacks'];
 
 interface ApiProduct {
     id: number;

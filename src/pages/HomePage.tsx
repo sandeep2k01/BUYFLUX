@@ -40,7 +40,7 @@ const HomePage = () => {
             opacity: 1,
             transition: { staggerChildren: 0.2 }
         }
-    };
+    } as any;
 
     const itemVariants = {
         hidden: { opacity: 0, scale: 0.8 },
@@ -49,7 +49,7 @@ const HomePage = () => {
             scale: 1,
             transition: { duration: 0.5, ease: "easeOut" }
         }
-    };
+    } as any;
 
     return (
         <div className="flex flex-col min-h-screen">

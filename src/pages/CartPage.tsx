@@ -48,7 +48,7 @@ const CartPage = () => {
             <div className="flex flex-col lg:flex-row gap-8">
                 {/* Cart Items */}
                 <div className="flex-1 space-y-6">
-                    {items.map((item) => (
+                    {items.map((item: any) => (
                         <div key={item.id} className="flex flex-col sm:flex-row items-center gap-4 bg-white p-4 rounded-lg border border-gray-100 shadow-sm relative">
                             <img src={item.image} alt={item.title} className="w-24 h-24 object-cover rounded-md" />
 

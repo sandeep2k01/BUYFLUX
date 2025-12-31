@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Package, Plus, TrendingUp, Users, ShoppingBag, Loader2, Database, RefreshCcw, Edit3, Trash2, Octagon } from 'lucide-react';
+import { Package, Plus, TrendingUp, Users, ShoppingBag, Loader2, Database, Edit3, Trash2, Octagon } from 'lucide-react';
 import { collection, onSnapshot, addDoc, deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
