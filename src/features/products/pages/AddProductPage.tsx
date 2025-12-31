@@ -4,7 +4,7 @@ import { Button } from '../../../components/ui/Button';
 import { productService } from '../../../services/productService';
 import { CheckCircle2, Globe, ArrowLeft, Upload, X, Zap } from 'lucide-react';
 import { toast } from 'sonner';
-import { motion, AnimatePresence } from 'framer-motion';
+
 
 const AddProductPage = () => {
     const navigate = useNavigate();
