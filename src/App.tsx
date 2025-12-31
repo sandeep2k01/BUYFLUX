@@ -1,0 +1,77 @@
+import { Suspense, lazy } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { store } from './store/store';
+import MainLayout from './layouts/MainLayout';
+import AuthLayout from './layouts/AuthLayout';
+import { LoadingSpinner } from './components/ui/LoadingSpinner';
+import { Toaster } from 'sonner';
+
+// Lazy load pages
+// Lazy load pages
+const HomePage = lazy(() => import('./pages/HomePage'));
+const ProductListingPage = lazy(() => import('./features/products/pages/ProductListingPage'));
+const CartPage = lazy(() => import('./pages/CartPage'));
+const WishlistPage = lazy(() => import('./pages/WishlistPage'));
+const ProfilePage = lazy(() => import('./pages/ProfilePage'));
+const LoginPage = lazy(() => import('./features/auth/pages/LoginPage'));
+const SignupPage = lazy(() => import('./features/auth/pages/SignupPage'));
+const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
+const AddProductPage = lazy(() => import('./features/products/pages/AddProductPage'));
+const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
+const ProductDetailPage = lazy(() => import('./features/products/pages/ProductDetailPage'));
+const EditProductPage = lazy(() => import('./features/products/pages/EditProductPage'));
+
+// Protected Route Component
+import { Navigate } from 'react-router-dom';
+import { useAppSelector } from './store/hooks';
+
+const AdminRoute = ({ children }: { children: React.ReactNode }) => {
+    const user = useAppSelector((state) => state.auth.user);
+    const isAdmin = user?.email === 'sandeepdamera596@gmail.com';
+
+    if (!isAdmin) {
+        return <Navigate to="/" replace />;
+    }
+
+    return <>{children}</>;
+};
+
+
+function App() {
+    return (
+        <Provider store={store}>
+            <Toaster position="top-center" richColors duration={1400} />
+            <AuthLayout>
+                <Router>
+                    <Suspense fallback={<LoadingSpinner />}>
+                        <Routes>
+                            <Route path="/login" element={<LoginPage />} />
+                            <Route path="/signup" element={<SignupPage />} />
+                            <Route path="/" element={<MainLayout />}>
+                                <Route index element={<HomePage />} />
+                                <Route path="products" element={<ProductListingPage />} />
+                                <Route path="products/:category" element={<ProductListingPage />} />
+                                <Route path="product/:id" element={<ProductDetailPage />} />
+                                <Route path="cart" element={<CartPage />} />
+                                <Route path="wishlist" element={<WishlistPage />} />
+                                <Route path="profile" element={<ProfilePage />} />
+                                <Route path="checkout" element={<CheckoutPage />} />
+
+                                {/* Protected Admin Routes */}
+                                <Route path="admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+                                <Route path="admin/add-product" element={<AdminRoute><AddProductPage /></AdminRoute>} />
+                                <Route path="admin/edit-product/:id" element={<AdminRoute><EditProductPage /></AdminRoute>} />
+
+                                {/* Add more routes here */}
+                                <Route path="*" element={<div className="p-10 text-center">404 - Not Found</div>} />
+                            </Route>
+                        </Routes>
+                    </Suspense>
+                </Router>
+            </AuthLayout>
+        </Provider>
+    );
+}
+
+export default App;
