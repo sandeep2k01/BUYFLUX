@@ -100,7 +100,7 @@ const ProfilePage = () => {
                 const base64String = reader.result as string;
                 setFormData(prev => ({ ...prev, photoURL: base64String }));
                 if (user?.uid) {
-                    await authService.updateUserProfile(user.uid, { photoURL: base64String });
+                    await authService.updateProfileDetails(user.uid, { photoURL: base64String });
                     toast.success("Profile photo updated");
                 }
             };
