@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Package, Facebook, Twitter, Instagram, Youtube, Mail, Phone, MapPin, ChevronRight } from 'lucide-react';
+import { Package, Instagram, Mail, Phone, MapPin, ChevronRight, Linkedin, Github, Briefcase } from 'lucide-react';
 
 const Footer = () => {
 
@@ -17,10 +17,10 @@ const Footer = () => {
     ];
 
     const socials = [
-        { Icon: Facebook, href: "#", label: "Facebook" },
-        { Icon: Twitter, href: "#", label: "Twitter" },
-        { Icon: Instagram, href: "#", label: "Instagram" },
-        { Icon: Youtube, href: "#", label: "Youtube" }
+        { Icon: Linkedin, href: "https://www.linkedin.com/in/sandeep-damera", label: "LinkedIn" },
+        { Icon: Briefcase, href: "https://www.naukri.com/mnj/v3/ms/login", label: "Naukri" },
+        { Icon: Github, href: "https://github.com/sandeep2k01", label: "GitHub" },
+        { Icon: Instagram, href: "https://www.instagram.com/sandeep_damera_/", label: "Instagram" }
     ];
 
     return (
@@ -30,9 +30,9 @@ const Footer = () => {
             <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-purple-600/5 rounded-full blur-[150px]" />
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 lg:gap-8 mb-20">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-20 mb-20">
                     {/* Brand Info */}
-                    <div className="space-y-8">
+                    <div className="space-y-8 lg:pr-12">
                         <Link to="/" className="flex items-center gap-3 group">
                             <div className="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-600/20 group-hover:scale-110 transition-transform">
                                 <Package className="w-6 h-6" />
@@ -50,6 +50,8 @@ const Footer = () => {
                                     key={i}
                                     href={social.href}
                                     title={social.label}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
                                     className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:bg-indigo-600 hover:text-white hover:-translate-y-2 transition-all duration-300"
                                 >
                                     <social.Icon className="w-5 h-5" />
