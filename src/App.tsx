@@ -7,6 +7,7 @@ import AuthLayout from './layouts/AuthLayout';
 import SmoothScroll from './components/layout/SmoothScroll';
 import { LoadingSpinner } from './components/ui/LoadingSpinner';
 import { Toaster } from 'sonner';
+import ScrollToTop from './components/layout/ScrollToTop';
 
 // Lazy load pages
 // Lazy load pages
@@ -47,6 +48,7 @@ function App() {
                 <Toaster position="top-center" richColors duration={1400} />
                 <AuthLayout>
                     <Router>
+                        <ScrollToTop />
                         <Suspense fallback={<LoadingSpinner />}>
                             <Routes>
                                 <Route path="/login" element={<LoginPage />} />
