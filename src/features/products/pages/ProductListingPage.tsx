@@ -10,7 +10,8 @@ import { Filter, Search } from 'lucide-react';
 
 const ProductListingPage = () => {
     const dispatch = useAppDispatch();
-    const { filteredItems, loading } = useAppSelector((state) => state.products);
+    const { filteredItems, loading, items: allItems } = useAppSelector((state) => state.products);
+    const totalItemsCount = allItems.length;
     const { category } = useParams<{ category?: string }>();
     const [isFilterOpen, setIsFilterOpen] = useState(false);
 
@@ -25,14 +26,20 @@ const ProductListingPage = () => {
             const displayMap: { [key: string]: string } = {
                 'men': 'Men',
                 'women': 'Women',
-                'kids & toys': 'Kids & Toys',
-                'gadgets & accessories': 'Gadgets & Accessories',
-                'anime': 'Anime Collection',
+                'kids': 'Kids',
+                'gadgets': 'Gadgets',
+                'anime': 'Anime',
                 'home appliances': 'Home Appliances',
                 'beauty & skincare': 'Beauty & Skincare',
                 'food & grocery': 'Food & Grocery'
             };
-            const formattedCat = displayMap[category.toLowerCase()] || category;
+            let formattedCat;
+            const catLower = category.toLowerCase();
+            if (catLower === 'kids & toys' || catLower === 'kids') formattedCat = 'Kids';
+            else if (catLower === 'gadgets & accessories' || catLower === 'gadgets') formattedCat = 'Gadgets';
+            else if (catLower === 'anime collection' || catLower === 'anime') formattedCat = 'Anime';
+            else formattedCat = displayMap[catLower] || category;
+
             dispatch(setCategoryFromUrl(formattedCat));
         } else {
             dispatch(setCategoryFromUrl(null));
@@ -80,7 +87,9 @@ const ProductListingPage = () => {
                                 {category ? category.replace(/%20/g, ' ').toUpperCase() : 'Premium Collection'}
                             </h1>
                             <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1">
-                                {filteredItems.length} curated pieces
+                                {filteredItems.length === totalItemsCount
+                                    ? `Showing all ${filteredItems.length} products`
+                                    : `Showing ${filteredItems.length} of ${totalItemsCount} products`}
                             </p>
                         </div>
                         <div className="flex items-center gap-3">

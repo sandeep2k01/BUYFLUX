@@ -3,7 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../../../config/firebase';
 import { Button } from '../../../components/ui/Button';
-import { ArrowLeft, Save, Loader2, Image as ImageIcon } from 'lucide-react';
+import { productService } from '../../../services/productService';
+import { ArrowLeft, Save, Loader2, Image as ImageIcon, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 import { Product } from '../../../types';
 
@@ -22,6 +23,8 @@ const EditProductPage = () => {
         image: '',
         discountPercentage: 0
     });
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [previewUrl, setPreviewUrl] = useState<string>('');
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -31,7 +34,9 @@ const EditProductPage = () => {
                 const docSnap = await getDoc(docRef);
 
                 if (docSnap.exists()) {
-                    setFormData(docSnap.data() as Product);
+                    const data = docSnap.data() as Product;
+                    setFormData(data);
+                    setPreviewUrl(data.image);
                 } else {
                     toast.error("Product not found");
                     navigate('/admin');
@@ -44,7 +49,24 @@ const EditProductPage = () => {
         };
 
         fetchProduct();
+
+        // Cleanup: dismiss any lingering toasts when navigating away
+        return () => {
+            toast.dismiss();
+        };
     }, [id, navigate]);
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setSelectedFile(file);
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            setPreviewUrl(event.target?.result as string);
+        };
+        reader.readAsDataURL(file);
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -52,24 +74,49 @@ const EditProductPage = () => {
 
         setSaving(true);
         try {
+            let finalImageUrl = formData.image;
+
+            // 1. If we have a new file selected, upload it first
+            if (selectedFile) {
+                const uploadToast = toast.loading("Uploading new image to Cloud Storage...");
+                try {
+                    finalImageUrl = await productService.uploadImage(selectedFile);
+                    toast.success("Image uploaded successfully!", { id: uploadToast });
+                } catch (uploadError: any) {
+                    toast.error(`Upload failed: ${uploadError.message || 'Unknown error'}`, { id: uploadToast });
+                    setSaving(false);
+                    return; // Stop the process if upload fails
+                }
+            }
+
+            // 2. Update Firestore document
             const docRef = doc(db, 'products', id);
             await updateDoc(docRef, {
                 ...formData,
                 price: Number(formData.price),
-                discountPercentage: Number(formData.discountPercentage)
+                discountPercentage: Number(formData.discountPercentage),
+                image: finalImageUrl
             });
             toast.success("Product updated successfully!");
             navigate('/admin');
-        } catch (error) {
-            toast.error("Failed to update product");
+        } catch (error: any) {
+            console.error(error);
+            toast.error(`Error: ${error.message || "Failed to update product"}`);
         } finally {
             setSaving(false);
+            // Safety dismiss to ensure no loading toast gets stuck
         }
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
+
+        // Update preview immediately if the URL is changed manually
+        if (name === 'image') {
+            setPreviewUrl(value);
+            setSelectedFile(null); // Clear staged file if URL is manually edited
+        }
     };
 
     if (loading) {
@@ -171,19 +218,34 @@ const EditProductPage = () => {
                         {/* Right: Image & Description */}
                         <div className="space-y-6">
                             <div>
-                                <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Image URL</label>
+                                <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Image Setup</label>
                                 <div className="space-y-4">
-                                    <input
-                                        type="url"
-                                        name="image"
-                                        value={formData.image}
-                                        onChange={handleChange}
-                                        required
-                                        className="w-full px-4 py-3 rounded-xl border border-gray-100 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600/10 outline-none transition-all font-mono text-xs"
-                                    />
-                                    <div className="aspect-[4/5] rounded-2xl overflow-hidden bg-gray-50 border border-gray-100 flex items-center justify-center relative group">
-                                        {formData.image ? (
-                                            <img src={formData.image} alt="Preview" className="w-full h-full object-cover" />
+                                    <div className="flex gap-2">
+                                        <input
+                                            type="url"
+                                            name="image"
+                                            value={formData.image}
+                                            onChange={handleChange}
+                                            placeholder="Paste Image Link from Unsplash..."
+                                            className="flex-1 px-4 py-3 rounded-xl border border-indigo-100 bg-indigo-50/30 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600/10 outline-none transition-all font-mono text-[10px]"
+                                        />
+                                        <label className="p-3 bg-indigo-50 text-indigo-600 rounded-xl cursor-pointer hover:bg-indigo-100 transition-colors group relative">
+                                            <Upload className="w-5 h-5" />
+                                            <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
+                                            <span className="absolute bottom-full right-0 mb-2 invisible group-hover:visible bg-gray-800 text-white text-[9px] px-2 py-1 rounded whitespace-nowrap">Upload to Cloudinary (Free)</span>
+                                        </label>
+                                    </div>
+
+                                    <div className="aspect-[4/5] rounded-2xl overflow-hidden bg-gray-50 border border-indigo-50 flex items-center justify-center relative group">
+                                        {previewUrl ? (
+                                            <>
+                                                <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
+                                                {selectedFile && (
+                                                    <div className="absolute top-4 right-4 bg-green-600 text-white text-[10px] font-black px-3 py-1.5 rounded-full shadow-xl animate-bounce">
+                                                        READY TO UPLOAD
+                                                    </div>
+                                                )}
+                                            </>
                                         ) : (
                                             <div className="text-center">
                                                 <ImageIcon className="w-12 h-12 text-gray-200 mx-auto mb-2" />
@@ -191,6 +253,9 @@ const EditProductPage = () => {
                                             </div>
                                         )}
                                     </div>
+                                    <p className="text-[10px] text-indigo-400 font-bold uppercase tracking-wider italic">
+                                        * Cloudinary Active • 100% Free Hosting for Your Uploads
+                                    </p>
                                 </div>
                             </div>
                         </div>

@@ -90,7 +90,7 @@ const RecentlyViewed = () => {
                                     navigate(`/product/${product.id}`);
                                     window.scrollTo(0, 0);
                                 }}
-                                className="aspect-square bg-gray-50 rounded-[1.2rem] md:rounded-[1.5rem] flex items-center justify-center mb-3 md:mb-4 overflow-hidden p-3 md:p-5 group-hover:bg-white transition-colors duration-500 relative"
+                                className="aspect-[3/4] bg-gray-50 rounded-[1.2rem] md:rounded-[1.5rem] flex items-center justify-center mb-3 md:mb-4 overflow-hidden group-hover:bg-white transition-colors duration-500 relative"
                             >
                                 <motion.img
                                     src={product.image || 'https://images.unsplash.com/photo-1594322436404-5a0526db4d13?auto=format&fit=crop&w=400&q=80'}
@@ -101,7 +101,7 @@ const RecentlyViewed = () => {
                                     onError={(e) => {
                                         (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1594322436404-5a0526db4d13?auto=format&fit=crop&w=400&q=80';
                                     }}
-                                    className="w-full h-full object-contain group-hover:drop-shadow-lg transition-all"
+                                    className="w-full h-full object-cover group-hover:drop-shadow-lg transition-all"
                                 />
                             </div>
 

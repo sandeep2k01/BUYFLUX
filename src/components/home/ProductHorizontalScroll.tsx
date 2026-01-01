@@ -103,7 +103,7 @@ const ProductHorizontalScroll = ({ title, products, category }: ProductHorizonta
                             window.scrollTo(0, 0);
                         }}
                     >
-                        <div className="aspect-[1/1.2] bg-gray-50 rounded-[1rem] md:rounded-[1.2rem] mb-2 md:mb-3 flex items-center justify-center overflow-hidden p-3 md:p-5 relative group-hover:bg-white transition-colors duration-500">
+                        <div className="aspect-[3/4] bg-gray-50 rounded-[1rem] md:rounded-[1.2rem] mb-2 md:mb-3 flex items-center justify-center overflow-hidden relative group-hover:bg-white transition-colors duration-500">
                             <motion.img
                                 src={product.image}
                                 alt={product.title}
@@ -113,7 +113,7 @@ const ProductHorizontalScroll = ({ title, products, category }: ProductHorizonta
                                 onError={(e) => {
                                     (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1594322436404-5a0526db4d13?q=80&w=800&auto=format&fit=crop';
                                 }}
-                                className="w-full h-full object-contain mix-blend-multiply transition-all duration-700"
+                                className="w-full h-full object-cover transition-all duration-700"
                             />
                             {product.discountPercentage && (
                                 <div className="absolute top-2 left-2 md:top-3 md:left-3 z-10">

@@ -48,8 +48,8 @@ const SidebarFilter = ({ onClose }: { onClose?: () => void }) => {
                     <input
                         type="range"
                         min="0"
-                        max="100000"
-                        step="500"
+                        max="1000000"
+                        step="1000"
                         value={filters.priceRange[1]}
                         onChange={(e) => dispatch(setPriceRange([0, parseInt(e.target.value)]))}
                         className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"

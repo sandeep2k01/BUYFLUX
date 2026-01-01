@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Package, Plus, TrendingUp, Users, ShoppingBag, Loader2, Database, Edit3, Trash2, Octagon } from 'lucide-react';
-import { collection, onSnapshot, addDoc, deleteDoc, doc } from 'firebase/firestore';
+import { collection, onSnapshot, deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { setFirebaseProducts } from '../../features/products/productSlice';
@@ -93,61 +93,137 @@ const AdminDashboard = () => {
             await deleteDoc(doc(db, 'products', id));
             toast.success("Product deleted successfully");
         } catch (error) {
+            console.error("Failed to delete product:", error);
             toast.error("Failed to delete product");
         }
     };
 
     const handleSeedPremiumCollection = async () => {
+        const confirmSeed = window.confirm("This will overwrite your existing data and populate exactly 175 curated products (25 per category) with high-quality synced images. Proceed?");
+        if (!confirmSeed) return;
+
         setIsSeeding(true);
         stopSeedingRef.current = false;
-        toast.loading("Populating Premium Store...", { id: 'seed' });
+        toast.loading("Clearing and Seeding Store with Synced Images...", { id: 'seed' });
+
         try {
-            const premiumProducts = [
-                // Anime
-                { title: "Naruto Sage Mode Figure", brand: "Bandai", price: 3499, category: "Anime", description: "Highly detailed Naruto action figure in Sage Mode.", image: "https://images.unsplash.com/photo-1611001716885-b3402558a62b?auto=format&fit=crop&w=800", rating: { rate: 4.9, count: 420 }, discountPercentage: 10 },
-                { title: "Akatsuki Cloud Hoodie", brand: "Hidden Leaf", price: 2899, category: "Anime", description: "Premium cotton hoodie with Akatsuki embroidery.", image: "https://images.unsplash.com/photo-1618331812471-de3230bc5a4e?auto=format&fit=crop&w=800", rating: { rate: 4.8, count: 850 }, discountPercentage: 15 },
-                { title: "Itachi Crow Graphic Tee", brand: "Grand Line", price: 1299, category: "Anime", description: "100% cotton tee with Itachi graphic.", image: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800", rating: { rate: 4.7, count: 320 }, discountPercentage: 5 },
+            const { writeBatch, collection, getDocs, doc } = await import('firebase/firestore');
 
-                // Men
-                { title: "Essential Oversized Tee", brand: "Modern Men", price: 1299, category: "Men", description: "Premium heavy cotton t-shirt with a relaxed fit.", image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800", rating: { rate: 4.8, count: 240 }, discountPercentage: 10 },
-                { title: "Classic Indigo Denim", brand: "Denim Co", price: 3499, category: "Men", description: "Vintage wash denim jacket with copper hardware.", image: "https://images.unsplash.com/photo-1576874620030-9b6e828f7312?auto=format&fit=crop&w=800", rating: { rate: 4.6, count: 180 }, discountPercentage: 20 },
-                { title: "Heritage Leather Backpack", brand: "Traveler", price: 6500, category: "Men", description: "Rugged water-resistant leather backpack for daily essentials.", image: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=800", rating: { rate: 4.7, count: 210 }, discountPercentage: 15 },
+            // Step 1: Clear everything first for a clean slate
+            const snapshot = await getDocs(collection(db, 'products'));
+            const clearBatch = writeBatch(db);
+            snapshot.docs.forEach((d) => {
+                clearBatch.delete(d.ref);
+            });
+            await clearBatch.commit();
+            console.log("Deleted old products:", snapshot.size);
 
-                // Women
-                { title: "Silk Evening Gown", brand: "Vogue Aura", price: 8499, category: "Women", description: "Pure silk gown with elegant drape and finish.", image: "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=800", rating: { rate: 4.9, count: 110 }, discountPercentage: 15 },
-                { title: "Starlight Diamond Pendant", brand: "Orra Luxe", price: 15999, category: "Women", description: "18k white gold pendant with a certified 0.5ct diamond.", image: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=800", rating: { rate: 5.0, count: 42 }, discountPercentage: 10 },
-
-                // Beauty
-                { title: "Radiance Vitamin C Serum", brand: "GlowRx", price: 1899, category: "Beauty & Skincare", description: "Active Vitamin C for a bright, even skin tone.", image: "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=800", rating: { rate: 4.8, count: 1240 }, discountPercentage: 30 },
-                { title: "Hydrating Night Cream", brand: "Pure Bliss", price: 3200, category: "Beauty & Skincare", description: "Overnight recovery cream with hyaluronic acid.", image: "https://images.unsplash.com/photo-1556228570-419a7c27d530?auto=format&fit=crop&w=800", rating: { rate: 4.9, count: 560 }, discountPercentage: 15 },
-
-                // Food
-                { title: "Exotic Fruit Basket", brand: "FarmFresh", price: 1499, category: "Food & Grocery", description: "Handpicked organic seasonal exotic fruits.", image: "https://images.unsplash.com/photo-1610832958506-ee5636637671?auto=format&fit=crop&w=800", rating: { rate: 4.9, count: 420 }, discountPercentage: 5 },
-                { title: "Pure Wildflower Honey", brand: "Henry's", price: 594, category: "Food & Grocery", description: "100% pure raw wildflower honey. Unfiltered and rich in antioxidants.", image: "https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=format&fit=crop&w=800", rating: { rate: 4.9, count: 135 }, discountPercentage: 14 },
-
-                // Gadgets
-                { title: "Titan Gen 4 Watch", brand: "NovaTech", price: 3499, category: "Gadgets", description: "Premium smartwatch with always-on AMOLED display.", image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800", rating: { rate: 4.6, count: 860 }, discountPercentage: 15 },
-
-                // Kids
-                { title: "STEM Robotics Kit", brand: "EduPlay", price: 3499, category: "Kids", description: "Build and code your own robots.", image: "https://images.unsplash.com/photo-1587654780291-39c9404d746b?auto=format&fit=crop&w=800", rating: { rate: 4.9, count: 156 }, discountPercentage: 12 },
-                { title: "Hyper-Drift RC Car", brand: "TurboX", price: 1800, category: "Kids", description: "1:16 scale rechargeable drift car with LED lights.", image: "https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&w=800", rating: { rate: 4.5, count: 240 }, discountPercentage: 25 },
-                { title: "Soft Plush Bunny", brand: "SnuggleSafe", price: 999, category: "Kids", description: "The softest bunny friend for your little ones.", image: "https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?auto=format&fit=crop&w=800", rating: { rate: 5.0, count: 520 }, discountPercentage: 5 }
+            const categoryData = [
+                {
+                    name: "Men",
+                    items: [
+                        { name: "Formal Tailored Suit", id: "1598961976249-459005e3f4e1", desc: "Expertly cut formal suit for professional excellence." },
+                        { name: "Classic Street Sneakers", id: "1542291026-7eec264c27ff", desc: "Iconic comfort and style for daily urban wear." },
+                        { name: "Luxury Chronograph Watch", id: "1523275335684-37898b6baf30", desc: "Precision engineering meets timeless aesthetic." },
+                        { name: "Vintage Denim Jacket", id: "1551028719-00167b16eac5", desc: "Rugged durability with a classic heritage wash." },
+                        { name: "Slim Leather Wallet", id: "1627123424574-724758594e93", desc: "Handcrafted top-grain leather minimalist essential." }
+                    ]
+                },
+                {
+                    name: "Women",
+                    items: [
+                        { name: "Silk Evening Gown", id: "1566174053879-31528523f8ae", desc: "Elegant silk drape for unforgettable evenings." },
+                        { name: "Diamond Pendant Necklace", id: "1515562141521-736ceac5406c", desc: "Sophisticated brilliance for any occasion." },
+                        { name: "Designer Leather Handbag", id: "1584917865442-de89df76afd3", desc: "Hand-stitched premium calfskin luxury bag." },
+                        { name: "Stiletto High Heels", id: "1543163521-1bf539c55dd2", desc: "Graceful silhouette with superior comfort." },
+                        { name: "Floral Eau de Parfum", id: "1541108564883-b51ccfde289a", desc: "A captivating blend of jasmine and rose." }
+                    ]
+                },
+                {
+                    name: "Kids",
+                    items: [
+                        { name: "STEM Robotics Kit", id: "1485827404703-89b55fcc595e", desc: "Interactive learning for future engineers." },
+                        { name: "Giant Plush Teddy Bear", id: "1559454403-b8fb88521f11", desc: "Ultra-soft companion for cozy nights." },
+                        { name: "Ultimate Brick Sets", id: "1587654780291-39c9404d746b", desc: "Infinite creativity with architectural blocks." },
+                        { name: "Junior Active Sneakers", id: "1514989940723-e8e51635b782", desc: "Durable comfort for all-day play." },
+                        { name: "Organic Cotton Baby Jumpsuit", id: "1522771935876-2497aa70caee", desc: "Softest fabric for delicate skin." }
+                    ]
+                },
+                {
+                    name: "Beauty & Skincare",
+                    items: [
+                        { name: "Vitamin C Radiance Serum", id: "1556228720-195a672e8a03", desc: "Brightening complex for a natural glow." },
+                        { name: "Velvet Matte Lipstick", id: "1586790170083-2f9ceadc732d", desc: "Long-lasting color with hydrating silk." },
+                        { name: "Hyaluronic Night Cream", id: "1556228570-419a7c27d530", desc: "Deep hydration for overnight recovery." },
+                        { name: "Herbal Essence Shampoo", id: "1526947425960-9851927ef044", desc: "Natural botanicals for shiny, healthy hair." },
+                        { name: "Professional Brush Set", id: "1522338242992-e1a54906a8da", desc: "Master-craft tools for flawless application." }
+                    ]
+                },
+                {
+                    name: "Food & Grocery",
+                    items: [
+                        { name: "Artisanal Dark Chocolate", id: "1575037614876-c38428c02b42", desc: "Single-origin cocoa for intense flavor." },
+                        { name: "Raw Wildflower Honey", id: "1587049352846-4a222e789038", desc: "Unfiltered honey from pristine meadows." },
+                        { name: "Tropical Fruit Basket", id: "1610832958506-ee5636637671", desc: "Fresh selection of sun-ripened exotic fruits." },
+                        { name: "Gourmet Roasted Nuts", id: "1514733670139-4d87a19da1f2", desc: "Premium energy-packed dry fruit mix." },
+                        { name: "Premium Arabica Coffee", id: "1495474472287-4d71bcdd2085", desc: "Freshly roasted beans for the perfect brew." }
+                    ]
+                },
+                {
+                    name: "Anime",
+                    items: [
+                        { name: "Limitless Sage Figure", id: "1612036782134-451bc0d14b32", desc: "Highly detailed collector's edition statue." },
+                        { name: "Neon Street Anime Hoodie", id: "1551488831-00ddcb6c6bd3", desc: "Oversized fit with cybernetic graphic art." },
+                        { name: "Collector's Manga Set", id: "1542314831-068cd1dbfeeb", desc: "First edition volumes with exclusive artwork." },
+                        { name: "Cyberpunk Portrait Scroll", id: "1627435601361-ec25f5b1d0e5", desc: "Premium matte finish artistic wall scroll." },
+                        { name: "Spirit Blade Decor", id: "1599508704512-2f19ff976223", desc: "Safe decorative replica for anime enthusiasts." }
+                    ]
+                },
+                {
+                    name: "Gadgets",
+                    items: [
+                        { name: "Titan Gaming Laptop", id: "1517336715181-e523f3144c12", desc: "Unmatched performance for elite gaming." },
+                        { name: "Active Pro Smartwatch", id: "1507764923212-00362e481df4", desc: "The ultimate health and fitness companion." },
+                        { name: "Elite Noise-Canceling Buds", id: "1505740420928-5e560c06d30e", desc: "Immersive sound with adaptive tech." },
+                        { name: "Vanguard VR System", id: "1592477976562-f46d16cc5614", desc: "Step into ultra-realistic virtual worlds." },
+                        { name: "Aero Stealth Drone", id: "1508614589041-895b9bc996ea", desc: "4K cinematic aerial photography master." }
+                    ]
+                }
             ];
 
+            const brands = ["Aura Premium", "Luxe Gear", "Moda Elite", "Quantum X", "Peak Pro", "Pure Essence"];
+            const seedBatch = writeBatch(db);
 
-            for (const p of premiumProducts) {
-                if (stopSeedingRef.current) {
-                    toast.info("Seeding stopped by user", { id: 'seed' });
-                    break;
+            for (const cat of categoryData) {
+                for (let i = 1; i <= 25; i++) {
+                    const itemTemplate = cat.items[i % cat.items.length];
+                    const price = Math.floor(Math.random() * (25000 - 1500) + 1500);
+                    const productRef = doc(collection(db, 'products'));
+
+                    const p = {
+                        title: `${itemTemplate.name} #${i}`,
+                        brand: brands[i % brands.length],
+                        price: price,
+                        category: cat.name,
+                        description: itemTemplate.desc,
+                        image: `https://images.unsplash.com/photo-${itemTemplate.id}?auto=format&fit=crop&w=800&q=80`,
+                        rating: {
+                            rate: Number((Math.random() * (5 - 4.5) + 4.5).toFixed(1)),
+                            count: Math.floor(Math.random() * 2000) + 500
+                        },
+                        discountPercentage: Math.floor(Math.random() * 25) + 10,
+                        createdAt: new Date().toISOString()
+                    };
+
+                    seedBatch.set(productRef, p);
                 }
-                await addDoc(collection(db, 'products'), p);
             }
 
-            if (!stopSeedingRef.current) {
-                toast.success("Premium Collection is now LIVE!", { id: 'seed' });
-            }
-        } catch (error) {
-            toast.error("Failed to seed premium collection.", { id: 'seed' });
+            await seedBatch.commit();
+            toast.success("175 Products Synced with High-Res Images!", { id: 'seed' });
+        } catch (error: any) {
+            console.error("Seeding error:", error);
+            toast.error(`Sync Failed: ${error.message}`, { id: 'seed' });
         } finally {
             setIsSeeding(false);
             stopSeedingRef.current = false;

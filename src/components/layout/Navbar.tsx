@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ShoppingCart, Heart, User, Search, Menu, X, Package } from 'lucide-react';
+import { ShoppingCart, Heart, User, Search, Menu, X, Package, ShoppingBag } from 'lucide-react';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { setSearch } from '../../features/products/productSlice';
 import { authService } from '../../services/authService';
@@ -120,6 +120,11 @@ const Navbar = () => {
                                             <Link to="/profile" onClick={() => setUserDropdownOpen(false)} className="flex items-center gap-3 px-4 py-3 text-[10px] font-black text-gray-700 hover:bg-gray-50 hover:text-indigo-600 transition-all uppercase tracking-wider">
                                                 <User className="w-3.5 h-3.5" />
                                                 Profile
+                                            </Link>
+
+                                            <Link to="/products" onClick={() => setUserDropdownOpen(false)} className="flex items-center gap-3 px-4 py-3 text-[10px] font-black text-gray-700 hover:bg-gray-50 hover:text-indigo-600 transition-all uppercase tracking-wider">
+                                                <ShoppingBag className="w-3.5 h-3.5" />
+                                                All Products
                                             </Link>
 
                                             {user?.email === 'sandeepdamera596@gmail.com' && (
@@ -273,6 +278,22 @@ const Navbar = () => {
                                             </Link>
                                         </motion.div>
                                     ))}
+
+                                    <motion.div
+                                        variants={{
+                                            hidden: { opacity: 0, x: -20 },
+                                            show: { opacity: 1, x: 0 }
+                                        }}
+                                    >
+                                        <Link
+                                            to="/products"
+                                            onClick={() => setIsMenuOpen(false)}
+                                            className="flex items-center gap-4 px-6 py-3.5 text-[11px] font-black text-indigo-600 active:bg-indigo-50 uppercase tracking-widest border-b border-gray-50 transition-colors font-inter"
+                                        >
+                                            <ShoppingBag className="w-3.5 h-3.5" />
+                                            All Products
+                                        </Link>
+                                    </motion.div>
 
                                     <div className="mt-8 px-6 py-2 text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 font-inter">Account Settings</div>
                                     <motion.div variants={{ hidden: { opacity: 0, x: -20 }, show: { opacity: 1, x: 0 } }}>

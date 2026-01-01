@@ -3,7 +3,8 @@ import {
     addDoc,
     getDocs,
     doc,
-    getDoc
+    getDoc,
+    updateDoc
 } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { Product } from '../types';
@@ -45,5 +46,49 @@ export const productService = {
             return { id: docSnap.id, ...docSnap.data() } as Product;
         }
         return null;
+    },
+
+    // Upload image to Cloudinary (FREE & REAL UPLOADS)
+    uploadImage: async (file: File): Promise<string> => {
+        const CLOUD_NAME = "do2vcaoke";
+        const UPLOAD_PRESET = "x9pzklrb";
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', UPLOAD_PRESET);
+
+        try {
+            console.log("DEBUG: Starting Cloudinary upload...");
+            const response = await fetch(
+                `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+                {
+                    method: 'POST',
+                    body: formData,
+                }
+            );
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error?.message || "Cloudinary Upload Failed");
+            }
+
+            const data = await response.json();
+            console.log("DEBUG: Cloudinary upload success:", data.secure_url);
+            return data.secure_url;
+        } catch (error: any) {
+            console.error("DEBUG: Cloudinary Error:", error);
+            throw new Error(error.message || "Failed to upload to Cloudinary. Check your Cloud Name & Preset.");
+        }
+    },
+
+    // Update product image
+    updateProductImage: async (productId: string, imageUrl: string) => {
+        try {
+            const productRef = doc(db, 'products', productId);
+            await updateDoc(productRef, { image: imageUrl });
+        } catch (error) {
+            console.error("Error updating product image:", error);
+            throw error;
+        }
     }
 };

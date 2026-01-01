@@ -16,18 +16,35 @@ const HomePage = () => {
         dispatch(fetchProducts());
     }, [dispatch]);
 
-    // Categories Filtering
-    const menProducts = allProducts.filter(p => p.category === 'Men').slice(0, 15);
-    const womenProducts = allProducts.filter(p => p.category === 'Women').slice(0, 15);
-    const kidProducts = allProducts.filter(p => p.category === 'Kids').slice(0, 15);
-    const beautyProducts = allProducts.filter(p => p.category === 'Beauty & Skincare').slice(0, 15);
-    const groceryProducts = allProducts.filter(p => p.category === 'Food & Grocery').slice(0, 15);
+    // Categories Filtering - Robust, synced with productSlice logic
+    const filterByCat = (catName: string) => {
+        const cat = catName.toLowerCase();
+        return allProducts.filter(item => {
+            const itemCat = item.category?.toLowerCase() || '';
+            if (!itemCat) return false;
 
-    // 4 NEW Dedicated Categories
-    const animeProducts = allProducts.filter(p => p.category === 'Anime').slice(0, 15);
+            if (cat === 'men') return (itemCat.includes('men') || itemCat === 'tops') && !itemCat.includes('women');
+            if (cat === 'women') return itemCat.includes('women') || itemCat.includes('dress') || itemCat.includes('jewel') || itemCat.includes('bag');
+            if (cat === 'kids' || cat.includes('kid')) return itemCat.includes('kids') || itemCat.includes('toy') || itemCat.includes('child') || itemCat.includes('baby');
+            if (cat === 'beauty') return itemCat.includes('beauty') || itemCat.includes('skin') || itemCat.includes('fragrance') || itemCat.includes('cosmetic') || itemCat === 'fragrances';
+            if (cat === 'food') return itemCat.includes('food') || itemCat.includes('groc') || itemCat.includes('drink') || itemCat.includes('snack') || itemCat === 'groceries';
+            if (cat === 'anime') return itemCat.includes('anime');
+            if (cat === 'appliances') return itemCat.includes('home') || itemCat.includes('appliance') || itemCat.includes('kitchen');
+            if (cat === 'gadgets') return itemCat.includes('gadget') || itemCat.includes('phone') || itemCat.includes('electronic');
 
-    const applianceProducts = allProducts.filter(p => p.category === 'Home Appliances').slice(0, 15);
-    const gadgetProducts = allProducts.filter(p => p.category === 'Gadgets').slice(0, 15);
+            return itemCat.includes(cat);
+        }).slice(0, 25);
+    };
+
+    const menProducts = filterByCat('Men').slice(0, 25);
+    const womenProducts = filterByCat('Women').slice(0, 25);
+    const kidProducts = filterByCat('Kids').slice(0, 25);
+    const beautyProducts = filterByCat('Beauty').slice(0, 25);
+    const groceryProducts = filterByCat('Food').slice(0, 25);
+
+    // 2 NEW Dedicated Categories (Select Units)
+    const animeProducts = filterByCat('Anime').slice(0, 25);
+    const gadgetProducts = filterByCat('Gadgets').slice(0, 25);
 
     const valueProps = [
         {
@@ -122,16 +139,6 @@ const HomePage = () => {
                     </section>
                 )}
 
-                {/* 8. Home Appliances */}
-                {applianceProducts.length > 0 && (
-                    <section className="bg-white py-4 md:py-8">
-                        <ProductHorizontalScroll
-                            title="Modern Home & Kitchen Appliances"
-                            products={applianceProducts}
-                            category="Home Appliances"
-                        />
-                    </section>
-                )}
 
                 {/* 9. Gadgets */}
                 {gadgetProducts.length > 0 && (

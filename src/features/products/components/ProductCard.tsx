@@ -48,7 +48,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         >
             <Link to={`/product/${product.id}`} className="block relative z-0">
                 {/* Image Container */}
-                <div className="aspect-[1/1.2] overflow-hidden bg-gray-50 relative p-4 md:p-8 flex items-center justify-center group-hover:bg-white transition-colors duration-500">
+                <div className="aspect-[3/4] overflow-hidden bg-gray-50 relative group-hover:bg-white transition-colors duration-500">
                     <motion.img
                         src={product.image || 'https://images.unsplash.com/photo-1594322436404-5a0526db4d13?q=80&w=800&auto=format&fit=crop'}
                         alt={product.title}
@@ -58,7 +58,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                         onError={(e) => {
                             (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1594322436404-5a0526db4d13?q=80&w=800&auto=format&fit=crop';
                         }}
-                        className="w-full h-full object-contain mix-blend-multiply transition-all duration-700"
+                        className="w-full h-full object-cover transition-all duration-700"
                     />
 
                     {/* Wishlist Button */}
