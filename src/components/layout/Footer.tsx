@@ -20,9 +20,7 @@ const Footer = () => {
                     {/* Brand & Socials */}
                     <div className="flex flex-col items-center md:items-start space-y-6">
                         <Link to="/" className="flex items-center gap-2 group">
-                            <span className="text-2xl font-black text-gray-900 italic tracking-tighter uppercase">
-                                Buyflux
-                            </span>
+                            <img src="/logomain.png" alt="Buyflux" className="h-14 md:h-16 w-auto object-contain" />
                         </Link>
                         <div className="flex gap-4">
                             {socials.map((social, i) => (
@@ -48,7 +46,7 @@ const Footer = () => {
                         </div>
                         <div className="space-y-1">
                             <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest">Connect</p>
-                            <p className="text-sm font-bold text-gray-900">+1 (888) BUY-FLUX</p>
+                            <p className="text-sm font-bold text-gray-900">+91 1234567890</p>
                         </div>
                         <div className="space-y-1 md:text-right">
                             <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest">Location</p>

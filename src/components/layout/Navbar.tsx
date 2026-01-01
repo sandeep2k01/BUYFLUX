@@ -192,8 +192,8 @@ const Navbar = () => {
                     <form onSubmit={handleSearch} className="relative">
                         <input
                             type="text"
-                            placeholder="SEARCH FOR PRODUCTS..."
-                            className="w-full bg-gray-50 border border-transparent rounded-xl py-2 pl-10 pr-4 text-[11px] font-black uppercase tracking-widest placeholder:text-gray-400 focus:outline-none focus:bg-white focus:ring-1 focus:ring-indigo-100 transition-all"
+                            placeholder="Search for products..."
+                            className="w-full bg-gray-50 border border-transparent rounded-xl py-2 pl-10 pr-4 text-xs font-medium placeholder:text-gray-400 focus:outline-none focus:bg-white focus:ring-1 focus:ring-indigo-100 transition-all"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
@@ -230,54 +230,85 @@ const Navbar = () => {
                                             )}
                                         </div>
                                         <div>
-                                            <p className="text-[10px] font-black text-indigo-100 uppercase tracking-widest whitespace-nowrap">Hello, {user?.displayName?.split(' ')[0] || 'Guest'}</p>
-                                            <p className="text-xs font-black uppercase tracking-tight truncate w-32">Premium Member</p>
+                                            <p className="text-[10px] font-medium text-indigo-100 uppercase tracking-widest whitespace-nowrap">Hello,</p>
+                                            <p className="text-sm font-black uppercase tracking-tight truncate w-32 mb-0.5">{user?.displayName || 'Guest User'}</p>
+                                            <p className="text-[10px] font-medium uppercase tracking-widest opacity-80">Premium Member</p>
                                         </div>
                                     </div>
                                     <X className="h-5 w-5 cursor-pointer opacity-70 hover:opacity-100 transition-opacity" onClick={() => setIsMenuOpen(false)} />
                                 </div>
-                                <div className="flex items-center gap-2">
-                                    <Package className="w-5 h-5" />
-                                    <p className="text-lg font-black italic uppercase tracking-tighter">Buyflux</p>
+                                <div className="flex items-center">
+                                    <img src="/logomain.png" alt="Buyflux" className="h-14 w-auto object-contain brightness-0 invert" />
                                 </div>
                             </div>
 
                             <div className="flex-1 overflow-y-auto py-4">
-                                <div className="px-6 py-2 text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 font-inter">Synchronized Sections</div>
-                                {navCategories.map((cat) => (
-                                    <Link
-                                        key={cat.name}
-                                        to={`/products/${cat.path}`}
-                                        onClick={() => setIsMenuOpen(false)}
-                                        className="flex items-center gap-4 px-6 py-3.5 text-[11px] font-black text-gray-950 active:bg-indigo-50 active:text-indigo-600 uppercase tracking-widest border-b border-gray-50 transition-colors font-inter"
-                                    >
-                                        {cat.name}
-                                    </Link>
-                                ))}
+                                <motion.div
+                                    variants={{
+                                        show: {
+                                            transition: {
+                                                staggerChildren: 0.05,
+                                                delayChildren: 0.2
+                                            }
+                                        }
+                                    }}
+                                    initial="hidden"
+                                    animate="show"
+                                >
+                                    <div className="px-6 py-2 text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 font-inter">Synchronized Sections</div>
+                                    {navCategories.map((cat) => (
+                                        <motion.div
+                                            key={cat.name}
+                                            variants={{
+                                                hidden: { opacity: 0, x: -20 },
+                                                show: { opacity: 1, x: 0 }
+                                            }}
+                                        >
+                                            <Link
+                                                to={`/products/${cat.path}`}
+                                                onClick={() => setIsMenuOpen(false)}
+                                                className="flex items-center gap-4 px-6 py-3.5 text-[11px] font-black text-gray-950 active:bg-indigo-50 active:text-indigo-600 uppercase tracking-widest border-b border-gray-50 transition-colors font-inter"
+                                            >
+                                                {cat.name}
+                                            </Link>
+                                        </motion.div>
+                                    ))}
 
-                                <div className="mt-8 px-6 py-2 text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 font-inter">Account Settings</div>
-                                <Link to="/wishlist" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-4 px-6 py-3.5 text-[11px] font-black text-gray-700 uppercase tracking-widest border-b border-gray-50 font-inter">My Wishlist</Link>
-                                <Link to="/profile" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-4 px-6 py-3.5 text-[11px] font-black text-gray-700 uppercase tracking-widest border-b border-gray-50 font-inter">Edit Profile</Link>
+                                    <div className="mt-8 px-6 py-2 text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 font-inter">Account Settings</div>
+                                    <motion.div variants={{ hidden: { opacity: 0, x: -20 }, show: { opacity: 1, x: 0 } }}>
+                                        <Link to="/wishlist" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-4 px-6 py-3.5 text-[11px] font-black text-gray-700 uppercase tracking-widest border-b border-gray-50 font-inter w-full block">My Wishlist</Link>
+                                    </motion.div>
+                                    <motion.div variants={{ hidden: { opacity: 0, x: -20 }, show: { opacity: 1, x: 0 } }}>
+                                        <Link to="/profile" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-4 px-6 py-3.5 text-[11px] font-black text-gray-700 uppercase tracking-widest border-b border-gray-50 font-inter w-full block">Edit Profile</Link>
+                                    </motion.div>
 
-                                {user?.email === 'sandeepdamera596@gmail.com' && (
-                                    <Link
-                                        to="/admin"
-                                        onClick={() => setIsMenuOpen(false)}
-                                        className="flex items-center gap-4 px-6 py-3.5 text-[11px] font-black text-indigo-600 bg-indigo-50 uppercase tracking-widest border-b border-indigo-100 font-inter"
-                                    >
-                                        <Package className="w-4 h-4" />
-                                        Admin Dashboard
-                                    </Link>
-                                )}
+                                    {user?.email === 'sandeepdamera596@gmail.com' && (
+                                        <motion.div variants={{ hidden: { opacity: 0, x: -20 }, show: { opacity: 1, x: 0 } }}>
+                                            <Link
+                                                to="/admin"
+                                                onClick={() => setIsMenuOpen(false)}
+                                                className="flex items-center gap-4 px-6 py-3.5 text-[11px] font-black text-indigo-600 bg-indigo-50 uppercase tracking-widest border-b border-indigo-100 font-inter"
+                                            >
+                                                <Package className="w-4 h-4" />
+                                                Admin Dashboard
+                                            </Link>
+                                        </motion.div>
+                                    )}
+                                </motion.div>
                             </div>
 
-                            <div className="p-6 border-t border-gray-100">
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.5 }}
+                                className="p-6 border-t border-gray-100"
+                            >
                                 {user ? (
                                     <button onClick={handleLogout} className="w-full py-3.5 bg-red-50 text-red-600 rounded-xl font-black uppercase text-[10px] tracking-widest hover:bg-red-600 hover:text-white transition-all font-inter">Logout</button>
                                 ) : (
                                     <button onClick={() => navigate('/login')} className="w-full py-3.5 bg-indigo-600 text-white rounded-xl font-black uppercase text-[10px] tracking-widest shadow-xl shadow-indigo-600/20 active:scale-95 transition-all font-inter">Initialize Login</button>
                                 )}
-                            </div>
+                            </motion.div>
                         </motion.div>
                     </motion.div>
                 )}
