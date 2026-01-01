@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 import { store } from './store/store';
 import MainLayout from './layouts/MainLayout';
 import AuthLayout from './layouts/AuthLayout';
+import SmoothScroll from './components/layout/SmoothScroll';
 import { LoadingSpinner } from './components/ui/LoadingSpinner';
 import { Toaster } from 'sonner';
 
@@ -42,35 +43,37 @@ const AdminRoute = ({ children }: { children: React.ReactNode }) => {
 function App() {
     return (
         <Provider store={store}>
-            <Toaster position="top-center" richColors duration={1400} />
-            <AuthLayout>
-                <Router>
-                    <Suspense fallback={<LoadingSpinner />}>
-                        <Routes>
-                            <Route path="/login" element={<LoginPage />} />
-                            <Route path="/signup" element={<SignupPage />} />
-                            <Route path="/" element={<MainLayout />}>
-                                <Route index element={<HomePage />} />
-                                <Route path="products" element={<ProductListingPage />} />
-                                <Route path="products/:category" element={<ProductListingPage />} />
-                                <Route path="product/:id" element={<ProductDetailPage />} />
-                                <Route path="cart" element={<CartPage />} />
-                                <Route path="wishlist" element={<WishlistPage />} />
-                                <Route path="profile" element={<ProfilePage />} />
-                                <Route path="checkout" element={<CheckoutPage />} />
+            <SmoothScroll>
+                <Toaster position="top-center" richColors duration={1400} />
+                <AuthLayout>
+                    <Router>
+                        <Suspense fallback={<LoadingSpinner />}>
+                            <Routes>
+                                <Route path="/login" element={<LoginPage />} />
+                                <Route path="/signup" element={<SignupPage />} />
+                                <Route path="/" element={<MainLayout />}>
+                                    <Route index element={<HomePage />} />
+                                    <Route path="products" element={<ProductListingPage />} />
+                                    <Route path="products/:category" element={<ProductListingPage />} />
+                                    <Route path="product/:id" element={<ProductDetailPage />} />
+                                    <Route path="cart" element={<CartPage />} />
+                                    <Route path="wishlist" element={<WishlistPage />} />
+                                    <Route path="profile" element={<ProfilePage />} />
+                                    <Route path="checkout" element={<CheckoutPage />} />
 
-                                {/* Protected Admin Routes */}
-                                <Route path="admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
-                                <Route path="admin/add-product" element={<AdminRoute><AddProductPage /></AdminRoute>} />
-                                <Route path="admin/edit-product/:id" element={<AdminRoute><EditProductPage /></AdminRoute>} />
+                                    {/* Protected Admin Routes */}
+                                    <Route path="admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+                                    <Route path="admin/add-product" element={<AdminRoute><AddProductPage /></AdminRoute>} />
+                                    <Route path="admin/edit-product/:id" element={<AdminRoute><EditProductPage /></AdminRoute>} />
 
-                                {/* Add more routes here */}
-                                <Route path="*" element={<NotFoundPage />} />
-                            </Route>
-                        </Routes>
-                    </Suspense>
-                </Router>
-            </AuthLayout>
+                                    {/* Add more routes here */}
+                                    <Route path="*" element={<NotFoundPage />} />
+                                </Route>
+                            </Routes>
+                        </Suspense>
+                    </Router>
+                </AuthLayout>
+            </SmoothScroll>
         </Provider>
     );
 }
