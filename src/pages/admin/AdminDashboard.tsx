@@ -310,7 +310,7 @@ const AdminDashboard = () => {
                     </div>
                 </div>
 
-                <div className="p-4 md:p-6 max-h-[500px] overflow-y-auto custom-scrollbar">
+                <div className="p-6 md:p-8">
                     {allProducts.filter(p =>
                         p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                         p.brand?.toLowerCase().includes(searchQuery.toLowerCase())
