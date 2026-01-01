@@ -45,22 +45,29 @@ body {
 /* Custom Utilities */
 @layer utilities {
     .touch-friendly-scrollbar::-webkit-scrollbar {
-        width: 20px;
+        width: 14px;
+        background-color: #f8fafc;
     }
 
     .touch-friendly-scrollbar::-webkit-scrollbar-track {
-        background: #f1f5f9;
-        border-radius: 10px;
+        background-color: #f8fafc;
+        border-left: 1px solid #e2e8f0;
     }
 
     .touch-friendly-scrollbar::-webkit-scrollbar-thumb {
-        background: #334155;
-        border-radius: 20px;
-        border: 4px solid #f1f5f9;
+        background-color: #475569;
+        border-radius: 10px;
+        border: 3px solid #f8fafc;
     }
 
     .touch-friendly-scrollbar::-webkit-scrollbar-thumb:hover {
-        background: #1e293b;
+        background-color: #1e293b;
+    }
+
+    /* Support for Firefox */
+    .touch-friendly-scrollbar {
+        scrollbar-width: auto;
+        scrollbar-color: #475569 #f8fafc;
     }
 
     .no-scrollbar::-webkit-scrollbar {
