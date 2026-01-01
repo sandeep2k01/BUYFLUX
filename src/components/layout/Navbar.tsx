@@ -86,8 +86,8 @@ const Navbar = () => {
                         <form onSubmit={handleSearch} className="relative w-full">
                             <input
                                 type="text"
-                                placeholder="SEARCH PREMIUM COUTURE..."
-                                className="w-full bg-gray-50 border border-transparent rounded-lg py-2.5 pl-10 pr-4 text-[10px] font-black uppercase tracking-widest placeholder:text-gray-400 focus:outline-none focus:bg-white focus:ring-1 focus:ring-gray-100 transition-all"
+                                placeholder="Search premium couture..."
+                                className="w-full bg-gray-50 border border-transparent rounded-lg py-2.5 pl-10 pr-4 text-xs font-medium placeholder:text-gray-400 focus:outline-none focus:bg-white focus:ring-1 focus:ring-gray-100 transition-all"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />

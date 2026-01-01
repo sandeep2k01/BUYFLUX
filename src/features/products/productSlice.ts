@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { Product } from '../../types';
 import { productService } from '../../services/productService';
+import Fuse from 'fuse.js';
 
 // Categories for the app - Final unified list
 const CATEGORIES = ['Men', 'Women', 'Kids', 'Beauty & Skincare', 'Food & Grocery', 'Gadgets', 'Anime', 'Home Appliances'];
@@ -634,63 +635,24 @@ const applyFilters = (items: Product[], filters: ProductState['filters']) => {
         result = result.filter(item => item.category?.toLowerCase() === activeCategory.toLowerCase());
     }
 
-    // 2. Advanced Fuzzy Search with Plural/Singular & Synonym mapping
+    // 2. Advanced Fuzzy Search with Fuse.js (Handles typos, plurals, and case)
     if (rawSearch) {
-        // Basic normalization: remove common possessives and plurals
-        const normalize = (word: string) => {
-            return word.replace(/'s$/g, '').replace(/s$/g, '').replace(/es$/g, '');
+        const fuseOptions = {
+            keys: [
+                { name: 'title', weight: 0.7 },
+                { name: 'category', weight: 0.3 },
+                { name: 'brand', weight: 0.2 },
+                { name: 'description', weight: 0.1 }
+            ],
+            threshold: 0.35, // Adjust for more/less strict fuzzy matching
+            distance: 100,
+            ignoreLocation: true,
+            minMatchCharLength: 2
         };
 
-        const searchTerms = rawSearch.split(/\s+/).filter(t => t.length > 2);
-        const normalizedTerms = searchTerms.map(normalize);
-
-        // Synonym mapping for broader matches
-        const synonymMap: Record<string, string[]> = {
-            'shirt': ['tee', 't-shirt', 'hoodie', 'top', 'apparel', 'clothing'],
-            'shoe': ['sneaker', 'boot', 'heel', 'footwear', 'stiletto', 'sandal'],
-            'watch': ['timepiece', 'clock', 'smartwatch', 'wrist'],
-            'kit': ['set', 'box', 'bundle'],
-            'toy': ['game', 'play', 'puzzle', 'figure'],
-            'beauty': ['skin', 'makeup', 'glam', 'serum', 'cream'],
-        };
-
-        result = result.filter(item => {
-            const title = item.title.toLowerCase();
-            const desc = item.description.toLowerCase();
-            const brand = (item.brand || '').toLowerCase();
-            const category = item.category.toLowerCase();
-            const combinedContent = `${title} ${desc} ${brand} ${category}`;
-
-            // Check if every term match (regular or normalized or synonym)
-            return searchTerms.every((term, idx) => {
-                const normTerm = normalizedTerms[idx];
-
-                // Direct match
-                if (combinedContent.includes(term) || combinedContent.includes(normTerm)) return true;
-
-                // Synonym match
-                const synonyms = synonymMap[normTerm] || [];
-                if (synonyms.some(syn => combinedContent.includes(syn))) return true;
-
-                // Also check individual words in title for better weight
-                const titleWords = title.split(/\s+/).map(normalize);
-                if (titleWords.some(tw => tw === normTerm)) return true;
-
-                return false;
-            });
-        });
-
-        // 3. Fallback: If result is empty, try a lighter search (any term matches)
-        if (result.length === 0 && searchTerms.length > 1) {
-            result = items.filter(item => {
-                const content = `${item.title} ${item.description} ${item.category}`.toLowerCase();
-                return searchTerms.some(term => content.includes(term) || content.includes(normalize(term)));
-            });
-            // Limit to category if it was detected
-            if (activeCategory) {
-                result = result.filter(item => item.category?.toLowerCase() === activeCategory.toLowerCase());
-            }
-        }
+        const fuse = new Fuse(result, fuseOptions);
+        const searchResults = fuse.search(rawSearch);
+        result = searchResults.map(r => r.item);
     }
 
     // 4. Standard Filters
