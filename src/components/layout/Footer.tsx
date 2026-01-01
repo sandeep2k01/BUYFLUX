@@ -30,9 +30,9 @@ const Footer = () => {
             <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-purple-600/5 rounded-full blur-[150px]" />
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-20 mb-20">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-16 mb-20">
                     {/* Brand Info */}
-                    <div className="space-y-8 lg:pr-12">
+                    <div className="lg:col-span-4 space-y-8">
                         <Link to="/" className="flex items-center gap-3 group">
                             <div className="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-600/20 group-hover:scale-110 transition-transform">
                                 <Package className="w-6 h-6" />
@@ -60,27 +60,45 @@ const Footer = () => {
                         </div>
                     </div>
 
-                    {/* Links Sections */}
-                    {footerSections.map((section, i) => (
-                        <div key={i} className="space-y-8">
-                            <h4 className="text-white text-xs font-black uppercase tracking-[0.3em] italic">
-                                {section.title}
-                            </h4>
-                            <ul className="space-y-4">
-                                {section.links.map((link, j) => (
-                                    <li key={j}>
-                                        <Link
-                                            to={link.path}
-                                            className="text-gray-400 text-sm font-semibold hover:text-indigo-500 transition-colors flex items-center group gap-2"
-                                        >
-                                            <ChevronRight className="w-3 h-3 opacity-0 -ml-5 group-hover:opacity-100 group-hover:ml-0 transition-all" />
-                                            {link.name}
-                                        </Link>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    ))}
+                    {/* Links Sections - Pushed closer to Brand Info */}
+                    <div className="lg:col-span-2 lg:col-start-6">
+                        {footerSections.map((section, i) => (
+                            <div key={i} className="space-y-8">
+                                <h4 className="text-white text-xs font-black uppercase tracking-[0.3em] italic">
+                                    {section.title}
+                                </h4>
+                                <ul className="space-y-4">
+                                    {section.links.map((link, j) => (
+                                        <li key={j}>
+                                            <Link
+                                                to={link.path}
+                                                className="text-gray-400 text-sm font-semibold hover:text-indigo-500 transition-colors flex items-center group gap-2"
+                                            >
+                                                <ChevronRight className="w-3 h-3 opacity-0 -ml-5 group-hover:opacity-100 group-hover:ml-0 transition-all" />
+                                                {link.name}
+                                            </Link>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Support Section - Added to fill space beautifully */}
+                    <div className="lg:col-span-2 lg:col-start-9 space-y-8">
+                        <h4 className="text-white text-xs font-black uppercase tracking-[0.3em] italic">
+                            Experience
+                        </h4>
+                        <ul className="space-y-4">
+                            {['Gift Cards', 'Bulk Orders', 'Member Lounge', 'Registry'].map((item) => (
+                                <li key={item}>
+                                    <span className="text-gray-500 text-sm font-semibold cursor-not-allowed opacity-50">
+                                        {item}
+                                    </span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
                 </div>
 
                 {/* Contact Strip */}
