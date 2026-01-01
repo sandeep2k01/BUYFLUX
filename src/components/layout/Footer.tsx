@@ -11,20 +11,20 @@ const Footer = () => {
     ];
 
     return (
-        <footer className="bg-white border-t border-gray-100 py-12 relative overflow-hidden">
+        <footer className="bg-white border-t border-gray-100 py-10 md:py-16 relative overflow-hidden">
             {/* Minimalist Ambient Glow */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-50/50 rounded-full blur-[100px] -z-10" />
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-10 mb-12">
+            <div className="max-w-7xl mx-auto px-6 lg:px-8">
+                <div className="flex flex-col md:flex-row justify-between items-center gap-12 md:gap-10 mb-12 text-center md:text-left">
                     {/* Brand & Socials */}
-                    <div className="space-y-6">
+                    <div className="flex flex-col items-center md:items-start space-y-6">
                         <Link to="/" className="flex items-center gap-2 group">
                             <span className="text-2xl font-black text-gray-900 italic tracking-tighter uppercase">
                                 Buyflux
                             </span>
                         </Link>
-                        <div className="flex gap-3">
+                        <div className="flex gap-4">
                             {socials.map((social, i) => (
                                 <a
                                     key={i}
@@ -41,7 +41,7 @@ const Footer = () => {
                     </div>
 
                     {/* Contact Info - Minimalist Row */}
-                    <div className="flex flex-wrap gap-8 md:gap-12">
+                    <div className="flex flex-col md:flex-row items-center gap-8 md:gap-16">
                         <div className="space-y-1">
                             <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest">Support</p>
                             <p className="text-sm font-bold text-gray-900">sandeepdamera596@gmail.com</p>
@@ -50,7 +50,7 @@ const Footer = () => {
                             <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest">Connect</p>
                             <p className="text-sm font-bold text-gray-900">+1 (888) BUY-FLUX</p>
                         </div>
-                        <div className="space-y-1 text-right">
+                        <div className="space-y-1 md:text-right">
                             <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest">Location</p>
                             <p className="text-sm font-bold text-gray-900">Warangal, India</p>
                         </div>
@@ -58,11 +58,11 @@ const Footer = () => {
                 </div>
 
                 {/* Bottom Bar - Ultra Clean */}
-                <div className="pt-8 border-t border-gray-50 flex flex-col md:flex-row justify-between items-center gap-6">
-                    <p className="text-gray-400 text-[9px] font-black uppercase tracking-[0.2em]">
+                <div className="pt-8 border-t border-gray-50 flex flex-col md:flex-row justify-between items-center gap-8 text-center md:text-left">
+                    <p className="text-gray-400 text-[9px] font-black uppercase tracking-[0.2em] order-2 md:order-1">
                         &copy; 2026 BUYFLUX. BY <span className="text-indigo-600">SANDEEP DAMERA</span>
                     </p>
-                    <div className="flex items-center gap-6 opacity-40 grayscale">
+                    <div className="flex items-center gap-8 opacity-40 grayscale order-1 md:order-2">
                         <img src="https://img.icons8.com/color/48/000000/visa.png" alt="Visa" className="h-3" />
                         <img src="https://img.icons8.com/color/48/000000/mastercard.png" alt="Mastercard" className="h-5" />
                         <img src="https://img.icons8.com/color/48/000000/paypal.png" alt="Paypal" className="h-4" />
