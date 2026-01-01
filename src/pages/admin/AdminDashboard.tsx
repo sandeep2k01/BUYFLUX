@@ -310,7 +310,7 @@ const AdminDashboard = () => {
                     </div>
                 </div>
 
-                <div className="p-4 md:p-6 md:pr-8 h-[80vh] overflow-y-auto touch-friendly-scrollbar">
+                <div className="p-6 md:p-8">
                     {allProducts.filter(p =>
                         p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                         p.brand?.toLowerCase().includes(searchQuery.toLowerCase())
