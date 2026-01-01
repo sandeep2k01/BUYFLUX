@@ -303,9 +303,9 @@ const AdminDashboard = () => {
                             Empty Store. Seed products to begin.
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4">
                             {allProducts.map((product) => (
-                                <div key={product.id} className="bg-gray-50/50 rounded-2xl border border-gray-100 p-4 hover:border-indigo-100 hover:bg-white transition-all group shadow-sm hover:shadow-md">
+                                <div key={product.id} className="bg-gray-50/50 rounded-xl md:rounded-2xl border border-gray-100 p-2.5 md:p-4 hover:border-indigo-100 hover:bg-white transition-all group shadow-sm hover:shadow-md">
                                     {/* Image Section */}
                                     <div className="aspect-square rounded-xl overflow-hidden bg-white border border-indigo-50/50 mb-4 relative">
                                         <img
@@ -354,15 +354,15 @@ const AdminDashboard = () => {
                                     <div className="mt-4 pt-3 border-t border-indigo-50/50 flex gap-2 md:hidden">
                                         <button
                                             onClick={() => navigate(`/admin/edit-product/${product.id}`)}
-                                            className="flex-1 py-2 rounded-xl bg-indigo-50 text-indigo-600 text-[10px] font-black uppercase tracking-widest"
+                                            className="flex-1 py-2 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center transition-all"
                                         >
-                                            Edit
+                                            <Edit3 className="w-3.5 h-3.5" />
                                         </button>
                                         <button
                                             onClick={() => handleDeleteProduct(product.id, product.title)}
-                                            className="flex-1 py-2 rounded-xl bg-red-50 text-red-600 text-[10px] font-black uppercase tracking-widest"
+                                            className="flex-1 py-2 rounded-lg bg-red-50 text-red-600 flex items-center justify-center transition-all"
                                         >
-                                            Delete
+                                            <Trash2 className="w-3.5 h-3.5" />
                                         </button>
                                     </div>
                                 </div>
