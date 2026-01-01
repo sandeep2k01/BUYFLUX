@@ -30,8 +30,16 @@ import { Navigate } from 'react-router-dom';
 import { useAppSelector } from './store/hooks';
 
 const AdminRoute = ({ children }: { children: React.ReactNode }) => {
-    const user = useAppSelector((state) => state.auth.user);
+    const { user, loading } = useAppSelector((state) => state.auth);
     const isAdmin = user?.email === 'sandeepdamera596@gmail.com';
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-white">
+                <LoadingSpinner />
+            </div>
+        );
+    }
 
     if (!isAdmin) {
         return <Navigate to="/" replace />;

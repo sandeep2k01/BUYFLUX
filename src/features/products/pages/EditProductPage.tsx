@@ -28,8 +28,15 @@ const EditProductPage = () => {
 
     useEffect(() => {
         const fetchProduct = async () => {
-            if (!id) return;
+            if (!id) {
+                console.error("No product ID found in URL");
+                toast.error("Invalid product ID");
+                navigate('/admin');
+                return;
+            }
+
             try {
+                setLoading(true);
                 const docRef = doc(db, 'products', id);
                 const docSnap = await getDoc(docRef);
 
@@ -42,7 +49,9 @@ const EditProductPage = () => {
                     navigate('/admin');
                 }
             } catch (error) {
-                toast.error("Failed to fetch product");
+                console.error("Error fetching product:", error);
+                toast.error("Failed to fetch product data");
+                navigate('/admin');
             } finally {
                 setLoading(false);
             }
@@ -50,7 +59,6 @@ const EditProductPage = () => {
 
         fetchProduct();
 
-        // Cleanup: dismiss any lingering toasts when navigating away
         return () => {
             toast.dismiss();
         };
@@ -76,20 +84,18 @@ const EditProductPage = () => {
         try {
             let finalImageUrl = formData.image;
 
-            // 1. If we have a new file selected, upload it first
             if (selectedFile) {
-                const uploadToast = toast.loading("Uploading new image to Cloud Storage...");
+                toast.loading("Uploading image...");
                 try {
                     finalImageUrl = await productService.uploadImage(selectedFile);
-                    toast.success("Image uploaded successfully!", { id: uploadToast });
+                    toast.success("Image uploaded!");
                 } catch (uploadError: any) {
-                    toast.error(`Upload failed: ${uploadError.message || 'Unknown error'}`, { id: uploadToast });
+                    toast.error(`Upload failed: ${uploadError.message}`);
                     setSaving(false);
-                    return; // Stop the process if upload fails
+                    return;
                 }
             }
 
-            // 2. Update Firestore document
             const docRef = doc(db, 'products', id);
             await updateDoc(docRef, {
                 ...formData,
@@ -97,14 +103,13 @@ const EditProductPage = () => {
                 discountPercentage: Number(formData.discountPercentage),
                 image: finalImageUrl
             });
-            toast.success("Product updated successfully!");
+            toast.success("Product updated!");
             navigate('/admin');
         } catch (error: any) {
-            console.error(error);
-            toast.error(`Error: ${error.message || "Failed to update product"}`);
+            console.error("Save error:", error);
+            toast.error("Failed to update product");
         } finally {
             setSaving(false);
-            // Safety dismiss to ensure no loading toast gets stuck
         }
     };
 
@@ -112,17 +117,31 @@ const EditProductPage = () => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
 
-        // Update preview immediately if the URL is changed manually
         if (name === 'image') {
             setPreviewUrl(value);
-            setSelectedFile(null); // Clear staged file if URL is manually edited
+            setSelectedFile(null);
         }
     };
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
-                <Loader2 className="w-10 h-10 animate-spin text-indigo-600" />
+            <div className="min-h-screen flex items-center justify-center bg-white">
+                <div className="flex flex-col items-center gap-4">
+                    <Loader2 className="w-10 h-10 animate-spin text-indigo-600" />
+                    <p className="text-xs font-black uppercase tracking-widest text-gray-400">Loading Product...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (!formData.title && !loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center p-6 text-center">
+                <div>
+                    <h2 className="text-xl font-black mb-2 uppercase">Something went wrong</h2>
+                    <p className="text-sm text-gray-500 mb-6 font-medium">We couldn't load the product details. Please try again.</p>
+                    <Button onClick={() => navigate('/admin')}>Back to Dashboard</Button>
+                </div>
             </div>
         );
     }
@@ -141,7 +160,7 @@ const EditProductPage = () => {
                 <div className="px-6 py-5 bg-gray-50/50 border-b border-gray-100 flex justify-between items-center">
                     <div>
                         <h1 className="text-xl font-black text-gray-900 tracking-tight uppercase italic leading-none">Edit Product</h1>
-                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Update details for {formData.title}</p>
+                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Update details for {formData.title || 'Product'}</p>
                     </div>
                 </div>
 
