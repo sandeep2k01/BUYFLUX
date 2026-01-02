@@ -8,3 +8,12 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <App />
     </React.StrictMode>,
 )
+
+// Register Service Worker for PWA
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+            .then(reg => console.log('Swift Service Worker active on link:', reg.scope))
+            .catch(err => console.error('Service Worker sync failure:', err));
+    });
+}
