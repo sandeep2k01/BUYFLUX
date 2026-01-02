@@ -54,8 +54,7 @@ const Navbar = () => {
         { name: 'Women', path: 'women' },
         { name: 'Kids', path: 'kids' },
         { name: 'Beauty', path: 'beauty & skincare' },
-        { name: 'Food & Grocery', path: 'food & grocery' },
-        { name: 'Admin', path: 'admin', isDirect: true }
+        { name: 'Food & Grocery', path: 'food & grocery' }
     ];
 
     return (
