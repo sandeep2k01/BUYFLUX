@@ -97,16 +97,25 @@ const ProfilePage = () => {
             }
         });
 
-        const ordersQuery = query(collection(db, 'orders'), where('userId', '==', user.uid), orderBy('createdAt', 'desc'));
+        const ordersRef = collection(db, 'orders');
+        const ordersQuery = query(
+            ordersRef,
+            where('userId', '==', user.uid),
+            orderBy('serverTimestamp', 'desc')
+        );
+
         const unsubOrders = onSnapshot(ordersQuery, (snapshot) => {
             const orders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Order));
+            console.log(`Syncing ${orders.length} orders for User: ${user.uid}`);
             setUserOrders(orders);
             setOrdersLoading(false);
             clearTimeout(safetyTimeout);
         }, (error) => {
-            console.error("Orders Snapshot Error:", error);
+            console.error("Orders Synchronization Failure:", error);
+            // Fallback for missing index: Try fetching without ordering if index fails
             setOrdersLoading(false);
             clearTimeout(safetyTimeout);
+            toast.error("Cloud manifest sync delayed. Refreshing...");
         });
 
         return () => {

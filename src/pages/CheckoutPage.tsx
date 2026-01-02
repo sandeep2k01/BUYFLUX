@@ -73,6 +73,7 @@ const CheckoutPage = () => {
 
         setLoading(true);
         try {
+            const { Timestamp } = await import('firebase/firestore');
             const orderData = {
                 userId: user.uid,
                 userEmail: user.email,
@@ -82,7 +83,8 @@ const CheckoutPage = () => {
                 status: 'pending' as const,
                 paymentMethod,
                 paymentStatus: paymentMethod === 'cod' ? 'pending' as const : 'completed' as const,
-                createdAt: new Date().toISOString()
+                createdAt: new Date().toISOString(),
+                serverTimestamp: Timestamp.now()
             };
 
             const id = await orderService.placeOrder(orderData);
