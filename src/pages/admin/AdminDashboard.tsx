@@ -521,7 +521,7 @@ const AdminDashboard = () => {
                     </table>
                 </div>
             </div>
-            <div className="grid grid-cols-1 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
                     <h2 className="text-lg font-bold mb-6 italic tracking-tight uppercase font-black">Quick Actions</h2>
                     <div className="grid grid-cols-2 gap-4">
@@ -533,6 +533,50 @@ const AdminDashboard = () => {
                             <Plus className="w-8 h-8 mx-auto mb-3 text-indigo-600 group-hover:scale-110 transition-transform" />
                             <span className="text-xs font-black uppercase tracking-widest text-gray-400">Add Item</span>
                         </Link>
+                    </div>
+                </div>
+
+                <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm overflow-hidden relative">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl opacity-50" />
+                    <h2 className="text-lg font-bold mb-4 italic tracking-tight uppercase font-black flex items-center gap-2">
+                        <div className="w-2 h-2 bg-indigo-600 rounded-full animate-pulse" />
+                        Registry Sync Portal
+                    </h2>
+                    <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest mb-4">Bridge the identity gap: Force sync Firebase Auth users to Database</p>
+                    <div className="flex gap-2">
+                        <input
+                            id="admin-sync-email"
+                            placeholder="Enter user email..."
+                            className="flex-1 bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest outline-none focus:border-indigo-600 transition-all"
+                        />
+                        <button
+                            onClick={async () => {
+                                const email = (document.getElementById('admin-sync-email') as HTMLInputElement).value;
+                                if (!email) return toast.error("Sync Error: Email required");
+                                try {
+                                    const { doc, setDoc } = await import('firebase/firestore');
+                                    // Use email hash or normalized string as ID for consistency
+                                    const normalizedEmail = email.toLowerCase().trim();
+                                    const syncId = `synced_${btoa(normalizedEmail).slice(0, 10)}`;
+
+                                    await setDoc(doc(db, 'users', syncId), {
+                                        email: normalizedEmail,
+                                        displayName: normalizedEmail.split('@')[0],
+                                        createdAt: new Date().toISOString(),
+                                        addresses: [],
+                                        isSyncedProfile: true
+                                    }, { merge: true });
+
+                                    toast.success("Identity manifest broadcasted!");
+                                    (document.getElementById('admin-sync-email') as HTMLInputElement).value = '';
+                                } catch (e) {
+                                    toast.error("Bridge failure: check permissions");
+                                }
+                            }}
+                            className="bg-indigo-600 text-white px-5 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100 active:scale-95"
+                        >
+                            Sync ID
+                        </button>
                     </div>
                 </div>
 

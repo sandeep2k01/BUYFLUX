@@ -45,17 +45,23 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
                         const newProfile = {
                             uid: user.uid,
                             email: user.email,
-                            displayName: user.displayName,
-                            photoURL: user.photoURL,
+                            displayName: user.displayName || user.email?.split('@')[0] || 'Member',
+                            photoURL: user.photoURL || '',
                             emailVerified: user.emailVerified,
                             createdAt: new Date().toISOString(),
                             addresses: []
                         };
-                        const { doc, setDoc } = await import('firebase/firestore');
-                        await setDoc(doc(db, 'users', user.uid), newProfile, { merge: true });
-                        dispatch(setUser(newProfile));
-                        console.log("Registry Synchronized: New user profile initialized.");
+                        try {
+                            const { doc, setDoc } = await import('firebase/firestore');
+                            await setDoc(doc(db, 'users', user.uid), newProfile, { merge: true });
+                            dispatch(setUser(newProfile));
+                            console.log("Registry Synchronized: New user profile initialized for UID:", user.uid);
+                        } catch (err) {
+                            console.error("Registry Sync Failed:", err);
+                        }
                     }
+                }).catch(err => {
+                    console.error("Failed to fetch user profile for sync:", err);
                 });
 
                 dispatch(fetchCart(user.uid));

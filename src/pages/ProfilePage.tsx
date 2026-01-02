@@ -229,7 +229,7 @@ const ProfilePage = () => {
         <div className="min-h-screen bg-gray-50/30">
             {/* Minimal Header */}
             <div className="bg-white border-b border-gray-100">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-6">
                     <div className="flex items-center gap-6">
                         <div className="relative group">
                             <div className="w-20 h-20 rounded-2xl overflow-hidden bg-gray-50 border border-gray-100 shadow-sm">
@@ -273,24 +273,29 @@ const ProfilePage = () => {
                 </div>
             </div>
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-                <div className="flex flex-col lg:flex-row gap-8">
-                    {/* Navigation Sidebar */}
-                    <aside className="lg:w-64 flex flex-col gap-1">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-10">
+                <div className="flex flex-col lg:flex-row gap-4 lg:gap-8">
+                    {/* Navigation Sidebar - Optimized for Mobile */}
+                    <aside className="lg:w-64 flex flex-row lg:flex-col gap-2 overflow-x-auto pb-2 lg:pb-0 scrollbar-hide -mx-4 px-4 lg:mx-0 lg:px-0 sticky top-[64px] z-10 bg-gray-50/80 backdrop-blur-md lg:bg-transparent lg:backdrop-blur-none border-b border-gray-100 lg:border-none">
                         {navItems.map((item) => (
                             <button
                                 key={item.id}
-                                onClick={() => setActiveTab(item.id)}
-                                className={`flex items-center justify-between px-6 py-4 rounded-2xl transition-all group ${activeTab === item.id
-                                    ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-100'
-                                    : 'bg-white/50 text-gray-500 hover:bg-white hover:text-gray-900 border border-transparent hover:border-gray-100'
+                                onClick={() => {
+                                    setActiveTab(item.id);
+                                    if (window.innerWidth < 1024) {
+                                        window.scrollTo({ top: 180, behavior: 'smooth' });
+                                    }
+                                }}
+                                className={`flex items-center justify-center lg:justify-between px-5 py-3 rounded-xl transition-all group whitespace-nowrap lg:whitespace-normal flex-shrink-0 ${activeTab === item.id
+                                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100'
+                                    : 'bg-white text-gray-500 hover:bg-white hover:text-gray-900 border border-gray-100'
                                     }`}
                             >
-                                <div className="flex items-center gap-4">
-                                    <item.icon className={`w-4 h-4 transition-transform group-hover:scale-110 ${activeTab === item.id ? 'text-white' : 'text-gray-400'}`} />
-                                    <span className="text-xs font-black uppercase tracking-widest">{item.label}</span>
+                                <div className="flex items-center gap-2 lg:gap-4">
+                                    <item.icon className={`w-3.5 h-3.5 transition-transform group-hover:scale-110 ${activeTab === item.id ? 'text-white' : 'text-gray-400'}`} />
+                                    <span className="text-[9px] lg:text-xs font-black uppercase tracking-widest">{item.label}</span>
                                 </div>
-                                {activeTab === item.id && <ChevronRight className="w-3 h-3 text-white/50" />}
+                                <ChevronRight className={`hidden lg:block w-3 h-3 ${activeTab === item.id ? 'text-white/50' : 'text-transparent group-hover:text-gray-300'}`} />
                             </button>
                         ))}
                     </aside>
@@ -307,46 +312,54 @@ const ProfilePage = () => {
                                     className="space-y-8"
                                 >
                                     {/* Quick Stats */}
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                        <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm group hover:shadow-xl transition-all duration-500">
-                                            <div className="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 mb-6 group-hover:scale-110 transition-transform">
-                                                <ShoppingBag className="w-6 h-6" />
+                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+                                        <div className="bg-white p-5 md:p-8 rounded-3xl md:rounded-[2.5rem] border border-gray-100 shadow-sm group hover:shadow-xl transition-all duration-500">
+                                            <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 mb-3 md:mb-6 group-hover:scale-110 transition-transform">
+                                                <ShoppingBag className="w-5 h-5 md:w-6 md:h-6" />
                                             </div>
-                                            <p className="text-4xl font-black text-gray-900 tracking-tighter italic mb-1">{userOrders.length}</p>
-                                            <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest leading-none">Successful Acquisitions</p>
+                                            <p className="text-2xl md:text-4xl font-black text-gray-900 tracking-tighter italic mb-1">{userOrders.length}</p>
+                                            <p className="text-[8px] md:text-[10px] text-gray-400 font-black uppercase tracking-widest leading-none">Acquisitions</p>
                                         </div>
-                                        <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm group hover:shadow-xl transition-all duration-500">
-                                            <div className="w-12 h-12 rounded-2xl bg-pink-50 flex items-center justify-center text-pink-600 mb-6 group-hover:scale-110 transition-transform">
-                                                <Heart className="w-6 h-6" />
+                                        <div className="bg-white p-5 md:p-8 rounded-3xl md:rounded-[2.5rem] border border-gray-100 shadow-sm group hover:shadow-xl transition-all duration-500">
+                                            <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-pink-50 flex items-center justify-center text-pink-600 mb-3 md:mb-6 group-hover:scale-110 transition-transform">
+                                                <Heart className="w-5 h-5 md:w-6 md:h-6" />
                                             </div>
-                                            <p className="text-4xl font-black text-gray-900 tracking-tighter italic mb-1">{wishlistItems.length}</p>
-                                            <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest leading-none">Curated Favorites</p>
+                                            <p className="text-2xl md:text-4xl font-black text-gray-900 tracking-tighter italic mb-1">{wishlistItems.length}</p>
+                                            <p className="text-[8px] md:text-[10px] text-gray-400 font-black uppercase tracking-widest leading-none">Favorites</p>
                                         </div>
-                                        <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm group hover:shadow-xl transition-all duration-500">
-                                            <div className="w-12 h-12 rounded-2xl bg-orange-50 flex items-center justify-center text-orange-600 mb-6 group-hover:scale-110 transition-transform">
-                                                <Zap className="w-6 h-6" />
+                                        <div className="col-span-2 md:col-span-1 bg-white p-5 md:p-8 rounded-3xl md:rounded-[2.5rem] border border-gray-100 shadow-sm group hover:shadow-xl transition-all duration-500 flex md:block items-center justify-between">
+                                            <div className="flex items-center gap-4 md:block">
+                                                <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-orange-50 flex items-center justify-center text-orange-600 mb-0 md:mb-6 group-hover:scale-110 transition-transform">
+                                                    <Zap className="w-5 h-5 md:w-6 md:h-6" />
+                                                </div>
+                                                <div className="md:hidden text-left">
+                                                    <p className="text-[8px] text-gray-400 font-black uppercase tracking-widest leading-none">Credits</p>
+                                                    <p className="text-xl font-black text-gray-900 tracking-tighter italic">2,450</p>
+                                                </div>
                                             </div>
-                                            <p className="text-4xl font-black text-gray-900 tracking-tighter italic mb-1">2,450</p>
-                                            <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest leading-none">Available Credits</p>
+                                            <div className="hidden md:block">
+                                                <p className="text-4xl font-black text-gray-900 tracking-tighter italic mb-1">2,450</p>
+                                                <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest leading-none">Available Credits</p>
+                                            </div>
                                         </div>
                                     </div>
 
                                     {/* Security & Welcome */}
-                                    <div className="bg-gray-900 p-10 md:p-12 rounded-[3.5rem] relative overflow-hidden group">
-                                        <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-600/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2" />
-                                        <div className="relative flex flex-col md:flex-row items-center gap-10">
-                                            <div className="p-6 bg-white/10 backdrop-blur-xl rounded-2xl border border-white/20">
-                                                <ShieldCheck className="w-10 h-10 text-indigo-400" />
+                                    <div className="bg-gray-900 p-6 md:p-12 rounded-3xl md:rounded-[3.5rem] relative overflow-hidden group">
+                                        <div className="absolute top-0 right-0 w-40 h-40 md:w-80 md:h-80 bg-indigo-600/20 rounded-full blur-[60px] md:blur-[100px] -translate-y-1/2 translate-x-1/2" />
+                                        <div className="relative flex flex-col md:flex-row items-center gap-6 md:gap-10">
+                                            <div className="p-4 bg-white/10 backdrop-blur-xl rounded-xl border border-white/20">
+                                                <ShieldCheck className="w-6 h-6 md:w-10 md:h-10 text-indigo-400" />
                                             </div>
                                             <div className="text-center md:text-left">
-                                                <h3 className="text-white text-2xl font-black uppercase italic tracking-tight mb-3">Membership status: Elite</h3>
-                                                <p className="text-gray-400 text-sm font-medium leading-relaxed max-w-xl">
-                                                    Welcome back to your dashboard. Your account is secured with 256-bit encryption and all your preferences are synchronized across your devices.
+                                                <h3 className="text-white text-lg md:text-2xl font-black uppercase italic tracking-tight mb-2 md:mb-3">Elite Membership</h3>
+                                                <p className="text-gray-400 text-xs md:text-sm font-medium leading-relaxed max-w-xl">
+                                                    Your account is secured with 256-bit encryption and all preferences are synchronized.
                                                 </p>
                                             </div>
                                             <button
                                                 onClick={() => setActiveTab('profile')}
-                                                className="md:ml-auto px-8 py-4 bg-white text-gray-900 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-400 hover:text-white transition-all shadow-xl active:scale-95"
+                                                className="w-full md:w-auto md:ml-auto px-6 py-3 bg-white text-gray-900 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-indigo-400 hover:text-white transition-all shadow-xl active:scale-95"
                                             >
                                                 Security Center
                                             </button>
