@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ShoppingCart, Heart, User, Search, Menu, X, Package, ShoppingBag, Smartphone, Zap } from 'lucide-react';
+import { ShoppingCart, Heart, User, Search, Menu, X, Package, ShoppingBag, Smartphone } from 'lucide-react';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { setSearch } from '../../features/products/productSlice';
 import { authService } from '../../services/authService';
@@ -12,16 +12,20 @@ const Navbar = () => {
     const [userDropdownOpen, setUserDropdownOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [isStandalone, setIsStandalone] = useState(false);
-    const [showBanner, setShowBanner] = useState(false);
+    const [showFooterButton, setShowFooterButton] = useState(false);
 
     useEffect(() => {
         const isPWA = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone;
         setIsStandalone(!!isPWA);
 
-        const bannerDismissed = localStorage.getItem('pwa-banner-dismissed');
-        if (!isPWA && !bannerDismissed) {
-            setShowBanner(true);
-        }
+        const handleScroll = () => {
+            const scrollPercent = (window.innerHeight + window.scrollY) / document.documentElement.scrollHeight;
+            // Show button when scrolled past 80% (near footer)
+            setShowFooterButton(scrollPercent > 0.80);
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
     const cartItems = useAppSelector((state) => state.cart.items);
@@ -55,50 +59,6 @@ const Navbar = () => {
 
     return (
         <nav className="bg-white sticky top-0 z-[100] border-b border-gray-100 shadow-sm">
-            {/* Dismissible PWA Banner for Mobile */}
-            <AnimatePresence>
-                {showBanner && (
-                    <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        className="md:hidden bg-indigo-600 overflow-hidden"
-                    >
-                        <div className="px-4 py-2 flex items-center justify-between">
-                            <div
-                                className="flex items-center gap-2 flex-1 cursor-pointer"
-                                onClick={async () => {
-                                    const promptEvent = (window as any).deferredPrompt;
-                                    if (promptEvent) {
-                                        promptEvent.prompt();
-                                        await promptEvent.userChoice;
-                                        (window as any).deferredPrompt = null;
-                                        setShowBanner(false);
-                                    } else {
-                                        toast.info("Tap Browser Menu (⋮) and 'Install App'");
-                                    }
-                                }}
-                            >
-                                <div className="bg-white/20 p-1 rounded-md">
-                                    <Zap className="w-3 h-3 text-white" />
-                                </div>
-                                <p className="text-[10px] font-black text-white uppercase tracking-wider">
-                                    Experience BUYFLUX App <span className="opacity-60 font-medium whitespace-nowrap ml-1">• Tap to Install</span>
-                                </p>
-                            </div>
-                            <button
-                                onClick={() => {
-                                    setShowBanner(false);
-                                    localStorage.setItem('pwa-banner-dismissed', 'true');
-                                }}
-                                className="p-1 hover:bg-white/10 rounded-full transition-colors"
-                            >
-                                <X className="w-3.5 h-3.5 text-white/70" />
-                            </button>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Desktop Main Header Row as per reference image */}
@@ -417,7 +377,33 @@ const Navbar = () => {
                     </motion.div>
                 )}
             </AnimatePresence>
-            {/* Tiny Floating Install Shortcut removed in favor of Top Banner */}
+            {/* Footer-Triggered Floating Install Pill (Mobile Browser Only) */}
+            <AnimatePresence>
+                {!isStandalone && showFooterButton && (
+                    <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[100] md:hidden">
+                        <motion.button
+                            initial={{ y: 50, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            exit={{ y: 50, opacity: 0 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={async () => {
+                                const promptEvent = (window as any).deferredPrompt;
+                                if (promptEvent) {
+                                    promptEvent.prompt();
+                                    await promptEvent.userChoice;
+                                    (window as any).deferredPrompt = null;
+                                } else {
+                                    toast.info("Tap the Browser Menu (⋮) and 'Install App'!");
+                                }
+                            }}
+                            className="flex items-center gap-2 bg-indigo-600 text-white px-6 py-3 rounded-full shadow-[0_15px_35px_rgba(79,70,229,0.4)] border border-indigo-400/30 whitespace-nowrap"
+                        >
+                            <Smartphone className="w-4 h-4" />
+                            <span className="text-[11px] font-black uppercase tracking-widest">Get App</span>
+                        </motion.button>
+                    </div>
+                )}
+            </AnimatePresence>
         </nav>
     );
 };
