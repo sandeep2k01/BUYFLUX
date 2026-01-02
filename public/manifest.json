@@ -1,22 +1,54 @@
 {
     "short_name": "BUYFLUX",
     "name": "BUYFLUX Digital Commerce",
+    "description": "Premium real-time e-commerce platform for modern shopping.",
     "icons": [
         {
             "src": "/icon-192.png",
             "type": "image/png",
             "sizes": "192x192",
-            "purpose": "any maskable"
+            "purpose": "any"
         },
         {
             "src": "/icon-512.png",
             "type": "image/png",
             "sizes": "512x512",
-            "purpose": "any maskable"
+            "purpose": "any"
         }
     ],
     "start_url": "/",
     "display": "standalone",
+    "orientation": "portrait",
     "theme_color": "#4f46e5",
-    "background_color": "#ffffff"
+    "background_color": "#ffffff",
+    "shortcuts": [
+        {
+            "name": "Products",
+            "short_name": "Products",
+            "description": "View our product catalog",
+            "url": "/products",
+            "icons": [
+                {
+                    "src": "/icon-192.png",
+                    "sizes": "192x192"
+                }
+            ]
+        },
+        {
+            "name": "Cart",
+            "short_name": "Cart",
+            "url": "/cart",
+            "icons": [
+                {
+                    "src": "/icon-192.png",
+                    "sizes": "192x192"
+                }
+            ]
+        }
+    ],
+    "categories": [
+        "shopping",
+        "lifestyle",
+        "fashion"
+    ]
 }
