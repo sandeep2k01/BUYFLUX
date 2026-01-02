@@ -388,22 +388,45 @@ const ProfilePage = () => {
                                                 <p className="text-white/80 text-[10px] font-medium leading-relaxed mb-4">
                                                     Install the BUYFLUX app for instant access and zero lag.
                                                 </p>
-                                                <button
-                                                    onClick={async () => {
-                                                        const promptEvent = (window as any).deferredPrompt;
-                                                        if (promptEvent) {
-                                                            promptEvent.prompt();
-                                                            const { outcome } = await promptEvent.userChoice;
-                                                            console.log(`User responded to install: ${outcome}`);
-                                                            (window as any).deferredPrompt = null;
-                                                        } else {
-                                                            toast.info("Open the Browser Menu (⋮) on your phone and tap 'Install App' for the fast experience!");
-                                                        }
-                                                    }}
-                                                    className="w-full py-3 bg-white text-indigo-600 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-indigo-50 transition-all shadow-lg active:scale-95"
-                                                >
-                                                    Connect Mobile App
-                                                </button>
+                                                <div className="flex flex-col sm:flex-row gap-3">
+                                                    <button
+                                                        onClick={async () => {
+                                                            const promptEvent = (window as any).deferredPrompt;
+                                                            if (promptEvent) {
+                                                                promptEvent.prompt();
+                                                                const { outcome } = await promptEvent.userChoice;
+                                                                console.log(`User responded to install: ${outcome}`);
+                                                                (window as any).deferredPrompt = null;
+                                                            } else {
+                                                                toast.info("Open the Browser Menu (⋮) on your phone and tap 'Install App' for the fast experience!");
+                                                            }
+                                                        }}
+                                                        className="flex-1 py-3 bg-white text-indigo-600 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-indigo-50 transition-all shadow-lg active:scale-95"
+                                                    >
+                                                        Connect Mobile App
+                                                    </button>
+                                                    <button
+                                                        onClick={async () => {
+                                                            if (navigator.share) {
+                                                                try {
+                                                                    await navigator.share({
+                                                                        title: 'BUYFLUX Digital Commerce',
+                                                                        text: 'Check out the future of real-time commerce at BUYFLUX. Install the app now!',
+                                                                        url: window.location.origin
+                                                                    });
+                                                                } catch (err) {
+                                                                    console.log('Share failed:', err);
+                                                                }
+                                                            } else {
+                                                                navigator.clipboard.writeText(window.location.origin);
+                                                                toast.success("Link copied to clipboard! Share it with your friends.");
+                                                            }
+                                                        }}
+                                                        className="flex-1 py-3 bg-indigo-500 text-white border border-indigo-400/30 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-indigo-400 transition-all shadow-lg active:scale-95"
+                                                    >
+                                                        Share App
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
