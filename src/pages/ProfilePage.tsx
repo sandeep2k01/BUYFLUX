@@ -354,24 +354,57 @@ const ProfilePage = () => {
                                     </div>
 
                                     {/* Security & Welcome */}
-                                    <div className="bg-gray-900 p-6 md:p-12 rounded-3xl md:rounded-[3.5rem] relative overflow-hidden group">
-                                        <div className="absolute top-0 right-0 w-40 h-40 md:w-80 md:h-80 bg-indigo-600/20 rounded-full blur-[60px] md:blur-[100px] -translate-y-1/2 translate-x-1/2" />
-                                        <div className="relative flex flex-col md:flex-row items-center gap-6 md:gap-10">
-                                            <div className="p-4 bg-white/10 backdrop-blur-xl rounded-xl border border-white/20">
-                                                <ShieldCheck className="w-6 h-6 md:w-10 md:h-10 text-indigo-400" />
-                                            </div>
-                                            <div className="text-center md:text-left">
-                                                <h3 className="text-white text-lg md:text-2xl font-black uppercase italic tracking-tight mb-2 md:mb-3">Elite Membership</h3>
-                                                <p className="text-gray-400 text-xs md:text-sm font-medium leading-relaxed max-w-xl">
-                                                    Your account is secured with 256-bit encryption and all preferences are synchronized.
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="bg-gray-900 p-6 md:p-8 rounded-3xl relative overflow-hidden group">
+                                            <div className="absolute top-0 right-0 w-40 h-40 bg-indigo-600/20 rounded-full blur-[60px] -translate-y-1/2 translate-x-1/2" />
+                                            <div className="relative">
+                                                <div className="flex items-center gap-4 mb-4">
+                                                    <div className="p-3 bg-white/10 backdrop-blur-xl rounded-xl border border-white/20">
+                                                        <ShieldCheck className="w-5 h-5 text-indigo-400" />
+                                                    </div>
+                                                    <h3 className="text-white text-sm font-black uppercase italic tracking-tight">Elite Secure</h3>
+                                                </div>
+                                                <p className="text-gray-400 text-[10px] font-medium leading-relaxed mb-4">
+                                                    Your account is secured with 256-bit encryption.
                                                 </p>
+                                                <button
+                                                    onClick={() => setActiveTab('profile')}
+                                                    className="w-full py-3 bg-white/5 text-white border border-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-white hover:text-gray-900 transition-all"
+                                                >
+                                                    Settings
+                                                </button>
                                             </div>
-                                            <button
-                                                onClick={() => setActiveTab('profile')}
-                                                className="w-full md:w-auto md:ml-auto px-6 py-3 bg-white text-gray-900 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-indigo-400 hover:text-white transition-all shadow-xl active:scale-95"
-                                            >
-                                                Security Center
-                                            </button>
+                                        </div>
+
+                                        <div className="bg-indigo-600 p-6 md:p-8 rounded-3xl relative overflow-hidden group shadow-xl shadow-indigo-100">
+                                            <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-[60px] -translate-y-1/2 translate-x-1/2" />
+                                            <div className="relative">
+                                                <div className="flex items-center gap-4 mb-4">
+                                                    <div className="p-3 bg-white/20 backdrop-blur-xl rounded-xl border border-white/30">
+                                                        <Zap className="w-5 h-5 text-white" />
+                                                    </div>
+                                                    <h3 className="text-white text-sm font-black uppercase italic tracking-tight">VIP Experience</h3>
+                                                </div>
+                                                <p className="text-white/80 text-[10px] font-medium leading-relaxed mb-4">
+                                                    Install the BUYFLUX app for instant access and zero lag.
+                                                </p>
+                                                <button
+                                                    onClick={async () => {
+                                                        const promptEvent = (window as any).deferredPrompt;
+                                                        if (promptEvent) {
+                                                            promptEvent.prompt();
+                                                            const { outcome } = await promptEvent.userChoice;
+                                                            console.log(`User responded to install: ${outcome}`);
+                                                            (window as any).deferredPrompt = null;
+                                                        } else {
+                                                            toast.info("Open the Browser Menu (⋮) on your phone and tap 'Install App' for the fast experience!");
+                                                        }
+                                                    }}
+                                                    className="w-full py-3 bg-white text-indigo-600 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-indigo-50 transition-all shadow-lg active:scale-95"
+                                                >
+                                                    Connect Mobile App
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </motion.div>

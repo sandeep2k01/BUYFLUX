@@ -49,7 +49,20 @@ const AdminRoute = ({ children }: { children: React.ReactNode }) => {
 };
 
 
+import { useEffect } from 'react';
+
 function App() {
+    useEffect(() => {
+        const handleInstallPrompt = (e: any) => {
+            e.preventDefault();
+            (window as any).deferredPrompt = e;
+        };
+
+        window.addEventListener('beforeinstallprompt', handleInstallPrompt);
+
+        return () => window.removeEventListener('beforeinstallprompt', handleInstallPrompt);
+    }, []);
+
     return (
         <Provider store={store}>
             <SmoothScroll>
