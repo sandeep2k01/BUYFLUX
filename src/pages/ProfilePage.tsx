@@ -22,7 +22,8 @@ import {
     Zap,
     Truck,
     Heart,
-    ArrowRight
+    ArrowRight,
+    XCircle
 } from 'lucide-react';
 import { doc, onSnapshot, collection, query, where, orderBy } from 'firebase/firestore';
 import { db } from '../config/firebase';
@@ -203,6 +204,17 @@ const ProfilePage = () => {
             toast.success('Default address updated');
         } catch (error) {
             toast.error('Update failed');
+        }
+    };
+
+    const handleCancelOrder = async (orderId: string) => {
+        if (!window.confirm("Are you sure you want to cancel this acquisition? This action cannot be undone.")) return;
+
+        try {
+            await authService.cancelOrder(orderId);
+            toast.success('Acquisition Ejected');
+        } catch (error) {
+            toast.error('Cancellation Failed');
         }
     };
 
@@ -627,9 +639,10 @@ const ProfilePage = () => {
                                                         <div className="flex flex-wrap items-center gap-4">
                                                             <div className={`px-5 py-2 rounded-full text-[9px] font-black uppercase tracking-widest flex items-center gap-2 shadow-sm border ${order.status === 'delivered' ? 'bg-green-50 text-green-600 border-green-100' :
                                                                 order.status === 'processing' ? 'bg-indigo-50 text-indigo-600 border-indigo-100' :
-                                                                    'bg-orange-50 text-orange-600 border-orange-100'
+                                                                    order.status === 'cancelled' ? 'bg-red-50 text-red-600 border-red-100' :
+                                                                        'bg-orange-50 text-orange-600 border-orange-100'
                                                                 }`}>
-                                                                <div className={`w-1.5 h-1.5 rounded-full ${order.status === 'delivered' ? 'bg-green-500' : 'bg-indigo-500'}`} />
+                                                                <div className={`w-1.5 h-1.5 rounded-full ${order.status === 'delivered' ? 'bg-green-500' : order.status === 'cancelled' ? 'bg-red-500' : 'bg-indigo-500'}`} />
                                                                 {order.status}
                                                             </div>
                                                             <div className="px-6 py-2 bg-gray-950 text-white rounded-full text-[10px] font-black uppercase tracking-widest italic shadow-lg">
@@ -663,15 +676,24 @@ const ProfilePage = () => {
                                                             ))}
                                                         </div>
 
-                                                        {/* Order Footer - Track Link */}
                                                         <div className="pt-6 border-t border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-6">
                                                             <div className="flex items-center gap-4 text-gray-400">
                                                                 <Truck className="w-4 h-4" />
                                                                 <p className="text-[10px] font-bold uppercase tracking-widest">Premium Logistical Sync Active</p>
                                                             </div>
-                                                            <button className="flex items-center gap-3 px-10 py-4 bg-white border border-gray-200 text-indigo-600 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:border-indigo-600 hover:bg-indigo-50/30 transition-all active:scale-95 shadow-sm">
-                                                                Review Manifest
-                                                            </button>
+                                                            <div className="flex items-center gap-3">
+                                                                {order.status !== 'delivered' && order.status !== 'cancelled' && (
+                                                                    <button
+                                                                        onClick={() => handleCancelOrder(order.id)}
+                                                                        className="flex items-center gap-2 px-6 py-3 bg-red-50 text-red-600 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all active:scale-95"
+                                                                    >
+                                                                        <XCircle className="w-3.5 h-3.5" /> Eject Unit
+                                                                    </button>
+                                                                )}
+                                                                <button className="flex items-center gap-3 px-10 py-4 bg-white border border-gray-200 text-indigo-600 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:border-indigo-600 hover:bg-indigo-50/30 transition-all active:scale-95 shadow-sm">
+                                                                    Review Manifest
+                                                                </button>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>

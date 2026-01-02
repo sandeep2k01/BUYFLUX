@@ -183,5 +183,11 @@ export const authService = {
             return docSnap.data() as UserProfile;
         }
         return null;
+    },
+
+    // Cancel Order
+    cancelOrder: async (orderId: string) => {
+        const docRef = doc(db, 'orders', orderId);
+        await setDoc(docRef, { status: 'cancelled' }, { merge: true });
     }
 };
