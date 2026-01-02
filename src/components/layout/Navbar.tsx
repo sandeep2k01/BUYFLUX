@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ShoppingCart, Heart, User, Search, Menu, X, Package, ShoppingBag } from 'lucide-react';
+import { ShoppingCart, Heart, User, Search, Menu, X, Package, ShoppingBag, Smartphone } from 'lucide-react';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { setSearch } from '../../features/products/productSlice';
 import { authService } from '../../services/authService';
@@ -11,6 +11,13 @@ const Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [userDropdownOpen, setUserDropdownOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
+    const [isStandalone, setIsStandalone] = useState(false);
+
+    useEffect(() => {
+        const isPWA = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone;
+        setIsStandalone(!!isPWA);
+    }, []);
+
     const cartItems = useAppSelector((state) => state.cart.items);
     const user = useAppSelector((state) => state.auth.user);
     const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
@@ -285,26 +292,6 @@ const Navbar = () => {
                                     initial="hidden"
                                     animate="show"
                                 >
-                                    <div className="px-6 mb-4">
-                                        <button
-                                            onClick={async () => {
-                                                const promptEvent = (window as any).deferredPrompt;
-                                                if (promptEvent) {
-                                                    promptEvent.prompt();
-                                                    await promptEvent.userChoice;
-                                                    (window as any).deferredPrompt = null;
-                                                } else {
-                                                    toast.info("Open Browser Menu (⋮) and tap 'Install'!");
-                                                }
-                                                setIsMenuOpen(false);
-                                            }}
-                                            className="w-full py-3 bg-indigo-600 text-white rounded-xl font-black uppercase text-[10px] tracking-[0.15em] shadow-lg shadow-indigo-600/20 flex items-center justify-center gap-2 active:scale-95 transition-all"
-                                        >
-                                            <ShoppingBag className="w-3.5 h-3.5" />
-                                            Install App
-                                        </button>
-                                    </div>
-
                                     <div className="px-6 py-2 text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 font-inter">Synchronized Sections</div>
                                     {navCategories.map((cat) => (
                                         <motion.div
@@ -379,28 +366,29 @@ const Navbar = () => {
                     </motion.div>
                 )}
             </AnimatePresence>
-            {/* Floating Install Shortcut (Mobile Only) */}
-            <div className="fixed bottom-24 right-5 z-[90] md:hidden">
-                <motion.button
-                    initial={{ scale: 0, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={async () => {
-                        const promptEvent = (window as any).deferredPrompt;
-                        if (promptEvent) {
-                            promptEvent.prompt();
-                            await promptEvent.userChoice;
-                            (window as any).deferredPrompt = null;
-                        } else {
-                            toast.info("Tap the Browser Menu (⋮) and 'Install App'!");
-                        }
-                    }}
-                    className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2.5 rounded-full shadow-[0_10px_30px_rgba(99,102,241,0.4)] border border-indigo-400/30"
-                >
-                    <ShoppingBag className="w-4 h-4" />
-                    <span className="text-[10px] font-black uppercase tracking-widest">Get App</span>
-                </motion.button>
-            </div>
+            {/* Tiny Floating Install Shortcut (Mobile Browser Only) */}
+            {!isStandalone && (
+                <div className="fixed bottom-24 right-5 z-[90] md:hidden">
+                    <motion.button
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={async () => {
+                            const promptEvent = (window as any).deferredPrompt;
+                            if (promptEvent) {
+                                promptEvent.prompt();
+                                await promptEvent.userChoice;
+                                (window as any).deferredPrompt = null;
+                            } else {
+                                toast.info("Tap the Browser Menu (⋮) and 'Install App'!");
+                            }
+                        }}
+                        className="w-10 h-10 flex items-center justify-center bg-indigo-600 text-white rounded-full shadow-lg border border-indigo-400/30"
+                    >
+                        <Smartphone className="w-5 h-5" />
+                    </motion.button>
+                </div>
+            )}
         </nav>
     );
 };
