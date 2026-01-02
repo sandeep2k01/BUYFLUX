@@ -1,4 +1,4 @@
-import { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { store } from './store/store';
@@ -49,7 +49,6 @@ const AdminRoute = ({ children }: { children: React.ReactNode }) => {
 };
 
 
-import { useEffect } from 'react';
 
 function App() {
     useEffect(() => {
