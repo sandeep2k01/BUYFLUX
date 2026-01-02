@@ -16,6 +16,7 @@ import {
     Map,
     Plus,
     Trash2,
+    Edit2,
     CheckCircle,
     Package,
     Zap,
