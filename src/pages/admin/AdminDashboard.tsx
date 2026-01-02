@@ -7,6 +7,7 @@ import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { setFirebaseProducts } from '../../features/products/productSlice';
 import { Product } from '../../types';
 import { toast } from 'sonner';
+import { motion } from 'framer-motion';
 
 const AdminDashboard = () => {
     const user = useAppSelector((state) => state.auth.user);
@@ -14,15 +15,8 @@ const AdminDashboard = () => {
     const navigate = useNavigate();
     const stopSeedingRef = useRef(false);
 
-    // RESTRICT ACCESS TO BUILDER ONLY
-    useEffect(() => {
-        if (!user || user.email !== 'sandeepdamera596@gmail.com') {
-            toast.error("Security Alert: Unauthorized Access Attempt", {
-                description: "This portal is reserved for the primary developer only."
-            });
-            navigate('/');
-        }
-    }, [user, navigate]);
+    // RESTRICT ACCESS TO BUILDER ONLY - No redirection, just UI block
+    const isAdmin = user?.email === 'sandeepdamera596@gmail.com';
 
     const [stats, setStats] = useState({
         products: 0,
@@ -86,7 +80,32 @@ const AdminDashboard = () => {
         };
     }, [dispatch, user]);
 
-    if (!user || user.email !== 'sandeepdamera596@gmail.com') return null;
+    if (!isAdmin) {
+        return (
+            <div className="min-h-[80vh] flex flex-col items-center justify-center p-6 bg-gray-50/50">
+                <motion.div
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="max-w-md w-full bg-white p-8 rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.05)] border border-gray-100 text-center"
+                >
+                    <div className="w-20 h-20 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <Octagon className="w-10 h-10 text-red-500 animate-pulse" />
+                    </div>
+                    <h1 className="text-2xl font-black text-gray-900 uppercase tracking-tight mb-3">Developer Portal Locked</h1>
+                    <p className="text-sm text-gray-500 leading-relaxed mb-8">
+                        The BUYFLUX Registry and Catalog Control Systems are encrypted. Access is restricted to the primary builder account.
+                    </p>
+
+                    <div className="space-y-3">
+                        <Link to="/" className="block w-full py-4 bg-gray-900 text-white rounded-2xl font-black uppercase text-[11px] tracking-widest hover:bg-indigo-600 transition-all shadow-xl shadow-gray-200">
+                            Return to Storefront
+                        </Link>
+                        <p className="text-[10px] font-black text-red-500 uppercase tracking-widest pt-2">Unauthorized Attempt Logged</p>
+                    </div>
+                </motion.div>
+            </div>
+        );
+    }
 
     const handleDeleteProduct = async (id: string, title: string) => {
         if (!window.confirm(`Are you sure you want to delete "${title}"?`)) return;

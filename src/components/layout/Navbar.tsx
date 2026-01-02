@@ -54,7 +54,8 @@ const Navbar = () => {
         { name: 'Women', path: 'women' },
         { name: 'Kids', path: 'kids' },
         { name: 'Beauty', path: 'beauty & skincare' },
-        { name: 'Food & Grocery', path: 'food & grocery' }
+        { name: 'Food & Grocery', path: 'food & grocery' },
+        { name: 'Admin', path: 'admin', isDirect: true }
     ];
 
     return (
@@ -85,10 +86,10 @@ const Navbar = () => {
 
                         {/* Desktop Categories */}
                         <div className="hidden md:flex items-center gap-6 lg:gap-7">
-                            {navCategories.map((cat) => (
+                            {navCategories.map((cat: any) => (
                                 <Link
                                     key={cat.name}
-                                    to={`/products/${cat.path}`}
+                                    to={cat.isDirect ? `/${cat.path}` : `/products/${cat.path}`}
                                     className="text-[10px] lg:text-[11px] font-black text-gray-950 hover:text-indigo-600 uppercase tracking-[0.15em] transition-all whitespace-nowrap"
                                 >
                                     {cat.name}
@@ -146,12 +147,10 @@ const Navbar = () => {
                                                 All Products
                                             </Link>
 
-                                            {user?.email === 'sandeepdamera596@gmail.com' && (
-                                                <Link to="/admin" onClick={() => setUserDropdownOpen(false)} className="flex items-center gap-3 px-4 py-3 text-[10px] font-black text-indigo-600 bg-indigo-50/50 hover:bg-indigo-50 transition-all uppercase tracking-wider border-y border-indigo-100/30">
-                                                    <Package className="w-3.5 h-3.5" />
-                                                    Admin Dashboard
-                                                </Link>
-                                            )}
+                                            <Link to="/admin" onClick={() => setUserDropdownOpen(false)} className="flex items-center gap-3 px-4 py-3 text-[10px] font-black text-indigo-600 bg-indigo-50/50 hover:bg-indigo-50 transition-all uppercase tracking-wider border-y border-indigo-100/30">
+                                                <Package className="w-3.5 h-3.5" />
+                                                Admin Dashboard
+                                            </Link>
 
                                             <button onClick={handleLogout} className="flex items-center gap-3 w-full text-left px-4 py-3 text-[10px] font-black text-red-600 hover:bg-red-50 transition-all uppercase tracking-wider mt-1">
                                                 <X className="w-3.5 h-3.5" />
@@ -346,18 +345,16 @@ const Navbar = () => {
                                         <Link to="/profile" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-4 px-6 py-3.5 text-[11px] font-black text-gray-700 uppercase tracking-widest border-b border-gray-50 font-inter w-full block">Edit Profile</Link>
                                     </motion.div>
 
-                                    {user?.email === 'sandeepdamera596@gmail.com' && (
-                                        <motion.div variants={{ hidden: { opacity: 0, x: -20 }, show: { opacity: 1, x: 0 } }}>
-                                            <Link
-                                                to="/admin"
-                                                onClick={() => setIsMenuOpen(false)}
-                                                className="flex items-center gap-4 px-6 py-3.5 text-[11px] font-black text-indigo-600 bg-indigo-50 uppercase tracking-widest border-b border-indigo-100 font-inter"
-                                            >
-                                                <Package className="w-4 h-4" />
-                                                Admin Dashboard
-                                            </Link>
-                                        </motion.div>
-                                    )}
+                                    <motion.div variants={{ hidden: { opacity: 0, x: -20 }, show: { opacity: 1, x: 0 } }}>
+                                        <Link
+                                            to="/admin"
+                                            onClick={() => setIsMenuOpen(false)}
+                                            className="flex items-center gap-4 px-6 py-3.5 text-[11px] font-black text-indigo-600 bg-indigo-50 uppercase tracking-widest border-b border-indigo-100 font-inter"
+                                        >
+                                            <Package className="w-4 h-4" />
+                                            Admin Dashboard
+                                        </Link>
+                                    </motion.div>
                                 </motion.div>
                             </div>
 

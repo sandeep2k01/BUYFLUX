@@ -85,7 +85,7 @@ function App() {
                                     <Route path="checkout" element={<CheckoutPage />} />
 
                                     {/* Protected Admin Routes */}
-                                    <Route path="admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+                                    <Route path="admin" element={<AdminDashboard />} />
                                     <Route path="admin/add-product" element={<AdminRoute><AddProductPage /></AdminRoute>} />
                                     <Route path="admin/edit-product/:id" element={<AdminRoute><EditProductPage /></AdminRoute>} />
 
