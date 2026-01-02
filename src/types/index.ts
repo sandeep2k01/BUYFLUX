@@ -57,6 +57,7 @@ export interface OrderItem extends CartItem { }
 export interface Order {
     id: string;
     userId: string;
+    userEmail?: string;
     items: OrderItem[];
     totalAmount: number;
     shippingAddress: Address;

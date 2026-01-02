@@ -159,6 +159,8 @@ const Navbar = () => {
                             )}
                         </Link>
 
+
+
                         <Link to="/cart" className="flex flex-col items-center relative group">
                             <ShoppingCart className="h-4.5 w-4.5 text-gray-950 group-hover:text-indigo-600 transition-colors" />
                             <span className="text-[9px] text-gray-950 font-black mt-1 uppercase tracking-widest leading-none">Bag</span>

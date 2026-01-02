@@ -9,7 +9,6 @@ import { toast } from 'sonner';
 
 interface ReviewSectionProps {
     productId: string;
-    productTitle: string;
 }
 
 const ReviewSection = ({ productId }: ReviewSectionProps) => {
@@ -17,42 +16,32 @@ const ReviewSection = ({ productId }: ReviewSectionProps) => {
     const [reviews, setReviews] = useState<Review[]>([]);
     const [rating, setRating] = useState(5);
     const [comment, setComment] = useState('');
+    const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
     const [reviewImages, setReviewImages] = useState<string[]>([]);
-    const [isConverting, setIsConverting] = useState(false);
+    const [uploading, setUploading] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showForm, setShowForm] = useState(false);
 
     const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
+        const files = e.target.files;
+        if (!files || files.length === 0) return;
 
-        setIsConverting(true);
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = (event) => {
-            const img = new Image();
-            img.src = event.target?.result as string;
-            img.onload = () => {
-                const canvas = document.createElement('canvas');
-                const MAX_WIDTH = 600;
-                let width = img.width;
-                let height = img.height;
+        if (selectedFiles.length + files.length > 3) {
+            toast.error("Maximum 3 images allowed");
+            return;
+        }
 
-                if (width > MAX_WIDTH) {
-                    height *= MAX_WIDTH / width;
-                    width = MAX_WIDTH;
-                }
+        const newFiles = Array.from(files);
+        setSelectedFiles(prev => [...prev, ...newFiles]);
 
-                canvas.width = width;
-                canvas.height = height;
-                const ctx = canvas.getContext('2d');
-                ctx?.drawImage(img, 0, 0, width, height);
+        // Create local URLs for preview
+        const newPreviews = newFiles.map(file => URL.createObjectURL(file));
+        setReviewImages(prev => [...prev, ...newPreviews]);
+    };
 
-                const dataUrl = canvas.toDataURL('image/jpeg', 0.5); // Low quality for review thumbnails
-                setReviewImages(prev => [...prev, dataUrl]);
-                setIsConverting(false);
-            };
-        };
+    const handleRemoveFile = (index: number) => {
+        setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+        setReviewImages(prev => prev.filter((_, i) => i !== index));
     };
 
     useEffect(() => {
@@ -86,15 +75,30 @@ const ReviewSection = ({ productId }: ReviewSectionProps) => {
         }
 
         setIsSubmitting(true);
+        setUploading(true);
+
         try {
+            // Uplod to Cloudinary
+            const { productService } = await import('../../../services/productService');
+            const uploadedUrls = [];
+
+            if (selectedFiles.length > 0) {
+                toast.loading("Synchronizing Images with Cloudinary...", { id: 'upload' });
+                for (const file of selectedFiles) {
+                    const url = await productService.uploadImage(file);
+                    uploadedUrls.push(url);
+                }
+                toast.success("Visual Data Secured!", { id: 'upload' });
+            }
+
             const reviewData = {
                 productId,
                 userId: user.uid,
-                userName: user.displayName || 'Anonymous',
-                userPhoto: user.photoURL,
+                userName: user.displayName || 'Anonymous User',
+                userPhoto: user.photoURL || '',
                 rating,
                 comment: comment.trim(),
-                images: reviewImages,
+                images: uploadedUrls,
                 createdAt: new Date().toISOString()
             };
 
@@ -103,12 +107,16 @@ const ReviewSection = ({ productId }: ReviewSectionProps) => {
             toast.success("Review posted successfully!");
             setComment('');
             setReviewImages([]);
+            setSelectedFiles([]);
             setShowForm(false);
-        } catch (error) {
-            console.error(error);
-            toast.error("Failed to post review");
+        } catch (error: any) {
+            console.error("REVIEW ERROR:", error);
+            toast.error("Failed to post review", {
+                description: error.message || "Registry synchronization timeout. Check network."
+            });
         } finally {
             setIsSubmitting(false);
+            setUploading(false);
         }
     };
 
@@ -176,7 +184,7 @@ const ReviewSection = ({ productId }: ReviewSectionProps) => {
                                             <img src={img} className="w-full h-full object-cover" />
                                             <button
                                                 type="button"
-                                                onClick={() => setReviewImages(prev => prev.filter((_, idx) => idx !== i))}
+                                                onClick={() => handleRemoveFile(i)}
                                                 className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                                             >
                                                 <X className="w-5 h-5 text-white" />
@@ -194,10 +202,10 @@ const ReviewSection = ({ productId }: ReviewSectionProps) => {
 
                                 <div className="flex flex-col md:flex-row gap-4 items-center pt-2">
                                     <div className="flex-1 flex items-center gap-3">
-                                        {isConverting ? (
+                                        {uploading ? (
                                             <div className="flex items-center gap-2">
                                                 <div className="w-4 h-4 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
-                                                <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest italic">Optimizing...</span>
+                                                <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest italic">Syncing Items...</span>
                                             </div>
                                         ) : (
                                             reviewImages.length < 3 && (
@@ -224,7 +232,7 @@ const ReviewSection = ({ productId }: ReviewSectionProps) => {
                                             Cancel
                                         </button>
                                         <button
-                                            disabled={isSubmitting || isConverting}
+                                            disabled={isSubmitting || uploading}
                                             className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-indigo-600 text-white px-8 py-2.5 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-indigo-700 disabled:opacity-50 shadow-lg shadow-indigo-100"
                                         >
                                             {isSubmitting ? 'Posting...' : <><Send className="w-3.5 h-3.5" /> Submit Review</>}

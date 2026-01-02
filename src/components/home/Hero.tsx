@@ -63,7 +63,7 @@ const Hero = () => {
 
     useEffect(() => {
         if (!isPaused) {
-            const timer = setInterval(nextSlide, 6000);
+            const timer = setInterval(nextSlide, 3000);
             return () => clearInterval(timer);
         }
     }, [isPaused, nextSlide]);
@@ -74,7 +74,7 @@ const Hero = () => {
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
         >
-            <AnimatePresence mode="wait">
+            <AnimatePresence>
                 <motion.div
                     key={currentIndex}
                     initial={{ opacity: 0 }}
@@ -87,7 +87,7 @@ const Hero = () => {
                     <motion.img
                         initial={{ scale: 1.1 }}
                         animate={{ scale: 1 }}
-                        transition={{ duration: 6, ease: "linear" }}
+                        transition={{ duration: 3, ease: "linear" }}
                         src={SLIDES[currentIndex].image}
                         alt={SLIDES[currentIndex].title}
                         className="w-full h-full object-cover"
@@ -166,7 +166,7 @@ const Hero = () => {
                         key={currentIndex}
                         initial={{ x: '-100%' }}
                         animate={{ x: '0%' }}
-                        transition={{ duration: 6, ease: "linear" }}
+                        transition={{ duration: 3, ease: "linear" }}
                         className="absolute inset-0 bg-white"
                     />
                 </div>

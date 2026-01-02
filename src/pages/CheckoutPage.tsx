@@ -75,6 +75,7 @@ const CheckoutPage = () => {
         try {
             const orderData = {
                 userId: user.uid,
+                userEmail: user.email,
                 items: cartItems as OrderItem[],
                 totalAmount: total,
                 shippingAddress: selectedAddress,
@@ -85,6 +86,16 @@ const CheckoutPage = () => {
             };
 
             const id = await orderService.placeOrder(orderData);
+
+            // Trigger Email Notification
+            const { notificationService } = await import('../services/notificationService');
+            await notificationService.sendOrderEmail(
+                user.email,
+                id,
+                'Order Initialized',
+                `Acquisition Manifest #${id.slice(-6).toUpperCase()} is now active. Tracking synchronized with your account.`
+            );
+
             setOrderId(id);
             dispatch(clearCart());
             setStep(4);

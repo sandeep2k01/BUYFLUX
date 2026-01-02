@@ -429,7 +429,7 @@ const ProductDetailPage = () => {
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -10 }}
                                 >
-                                    <ReviewSection productId={product.id} productTitle={product.title} />
+                                    <ReviewSection productId={product.id} />
                                 </motion.div>
                             )}
                         </AnimatePresence>

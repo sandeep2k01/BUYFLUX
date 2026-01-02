@@ -269,7 +269,7 @@ const AdminDashboard = () => {
             </div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-10">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
                 {statCards.map((stat) => (
                     <div key={stat.label} className="bg-white p-4 md:p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col md:flex-row items-center gap-4 hover:shadow-md transition-shadow">
                         <div className={`${stat.color} p-2.5 md:p-3 rounded-xl text-white`}>
@@ -286,6 +286,8 @@ const AdminDashboard = () => {
                     </div>
                 ))}
             </div>
+
+
 
             {/* Manage Products Section */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden mb-10">
@@ -395,32 +397,85 @@ const AdminDashboard = () => {
 
             {/* Recent Orders Section */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden mb-10">
-                <div className="p-6 md:p-8 border-b border-gray-50 bg-gray-50/30">
+                <div className="p-6 md:p-8 border-b border-gray-50 bg-gray-50/30 flex justify-between items-center">
                     <h2 className="text-lg md:text-xl font-black text-gray-900 tracking-tight flex items-center gap-2">
                         <ShoppingBag className="w-6 h-6 text-indigo-600" /> RECENT ORDERS
                     </h2>
+                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Update status in real-time</span>
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse text-sm">
                         <thead>
                             <tr className="bg-gray-50/50">
                                 <th className="p-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Order</th>
+                                <th className="p-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Customer</th>
                                 <th className="p-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Total</th>
                                 <th className="p-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Status</th>
+                                <th className="p-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Update</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100 font-bold">
                             {recentOrders.map((order) => (
-                                <tr key={order.id}>
+                                <tr key={order.id} className="hover:bg-gray-50/50 transition-colors">
                                     <td className="p-4">
                                         <p className="text-xs font-black text-gray-900 uppercase">#{order.id.slice(-6)}</p>
-                                        <p className="text-[10px] text-gray-400">{order.shippingAddress?.name}</p>
+                                        <p className="text-[10px] text-gray-400">{new Date(order.createdAt).toLocaleDateString()}</p>
                                     </td>
-                                    <td className="p-4 text-xs font-black">₹{order.totalAmount}</td>
-                                    <td className="p-4 text-[9px]">
-                                        <span className={`px-2 py-1 rounded-full uppercase tracking-widest font-black ${order.status === 'delivered' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>
+                                    <td className="p-4">
+                                        <p className="text-xs font-bold text-gray-900">{order.shippingAddress?.name}</p>
+                                        <p className="text-[10px] text-gray-400 truncate max-w-[150px]">{order.shippingAddress?.city}</p>
+                                    </td>
+                                    <td className="p-4 text-xs font-black text-indigo-600">₹{order.totalAmount.toLocaleString()}</td>
+                                    <td className="p-4">
+                                        <span className={`px-2 py-1 rounded-full text-[9px] uppercase tracking-widest font-black ${order.status === 'delivered' ? 'bg-green-100 text-green-700' :
+                                            order.status === 'cancelled' ? 'bg-red-100 text-red-700' :
+                                                order.status === 'shipped' ? 'bg-indigo-100 text-indigo-700' :
+                                                    'bg-blue-100 text-blue-700'
+                                            }`}>
                                             {order.status}
                                         </span>
+                                    </td>
+                                    <td className="p-4">
+                                        <select
+                                            value={order.status}
+                                            onChange={async (e) => {
+                                                const newStatus = e.target.value as any;
+                                                try {
+                                                    const { orderService } = await import('../../services/orderService');
+                                                    const { notificationService } = await import('../../services/notificationService');
+
+                                                    await orderService.updateOrderStatus(order.id, newStatus);
+
+                                                    // Send Email Notification to User
+                                                    let userEmail = order.userEmail;
+                                                    if (!userEmail) {
+                                                        const { authService } = await import('../../services/authService');
+                                                        const profile = await authService.getUserProfile(order.userId);
+                                                        userEmail = profile?.email || '';
+                                                    }
+
+                                                    if (userEmail) {
+                                                        await notificationService.sendOrderEmail(
+                                                            userEmail,
+                                                            order.id,
+                                                            'Order Status Update',
+                                                            `Acquisition Manifest #${order.id.slice(-6).toUpperCase()} is now ${newStatus.toUpperCase()}.`
+                                                        );
+                                                    }
+
+                                                    toast.success(`Order #${order.id.slice(-6)} updated to ${newStatus}`);
+                                                } catch (err) {
+                                                    toast.error("Failed to update status");
+                                                }
+                                            }}
+                                            className="bg-white border border-gray-200 rounded-lg text-[10px] font-black uppercase tracking-tight py-1 px-2 outline-none focus:border-indigo-600 transition-all cursor-pointer"
+                                        >
+                                            <option value="pending">Pending</option>
+                                            <option value="processing">Processing</option>
+                                            <option value="shipped">Shipped</option>
+                                            <option value="delivered">Delivered</option>
+                                            <option value="cancelled">Cancelled</option>
+                                        </select>
                                     </td>
                                 </tr>
                             ))}
@@ -466,7 +521,7 @@ const AdminDashboard = () => {
                     </table>
                 </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 gap-8">
                 <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
                     <h2 className="text-lg font-bold mb-6 italic tracking-tight uppercase font-black">Quick Actions</h2>
                     <div className="grid grid-cols-2 gap-4">
@@ -481,20 +536,7 @@ const AdminDashboard = () => {
                     </div>
                 </div>
 
-                <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
-                    <h2 className="text-lg font-bold mb-6 italic tracking-tight uppercase font-black">Sync Status</h2>
-                    <div className="space-y-4">
-                        <div className="flex items-center justify-between p-4 bg-green-50 rounded-xl border border-green-100">
-                            <div className="flex items-center gap-3">
-                                <div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse"></div>
-                                <span className="text-xs font-black uppercase tracking-widest text-green-700">Firebase Active</span>
-                            </div>
-                        </div>
-                        <p className="text-[10px] text-gray-400 font-bold uppercase leading-relaxed">
-                            Total users count (Auth vs Firestore): Please note that counts only reflect users who have logged in or saved profile details in the 'users' collection.
-                        </p>
-                    </div>
-                </div>
+
             </div>
         </div>
     );

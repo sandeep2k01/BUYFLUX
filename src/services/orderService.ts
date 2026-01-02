@@ -5,7 +5,9 @@ import {
     where,
     getDocs,
     orderBy,
-    Timestamp
+    Timestamp,
+    doc,
+    updateDoc
 } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { Order } from '../types';
@@ -48,6 +50,17 @@ export const orderService = {
             return orders;
         } catch (error) {
             console.error('Error fetching orders:', error);
+            throw error;
+        }
+    },
+
+    // Update order status (Admin)
+    updateOrderStatus: async (orderId: string, status: Order['status']): Promise<void> => {
+        try {
+            const orderRef = doc(db, 'orders', orderId);
+            await updateDoc(orderRef, { status });
+        } catch (error) {
+            console.error('Error updating order status:', error);
             throw error;
         }
     }

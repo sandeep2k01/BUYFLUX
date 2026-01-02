@@ -30,15 +30,31 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
                 }));
 
                 // Fetch extra data and real verification status from Firestore
-                authService.getUserProfile(user.uid).then(profile => {
+                authService.getUserProfile(user.uid).then(async (profile) => {
                     if (profile) {
                         dispatch(setUser({
+                            ...profile,
+                            uid: user.uid,
+                            email: user.email,
+                            displayName: profile.displayName || user.displayName,
+                            photoURL: profile.photoURL || user.photoURL,
+                            emailVerified: profile.emailVerified || user.emailVerified
+                        }));
+                    } else {
+                        // FORCE REGISTRY SYNC: Create profile if missing in Firestore
+                        const newProfile = {
                             uid: user.uid,
                             email: user.email,
                             displayName: user.displayName,
                             photoURL: user.photoURL,
-                            emailVerified: profile.emailVerified || user.emailVerified
-                        }));
+                            emailVerified: user.emailVerified,
+                            createdAt: new Date().toISOString(),
+                            addresses: []
+                        };
+                        const { doc, setDoc } = await import('firebase/firestore');
+                        await setDoc(doc(db, 'users', user.uid), newProfile, { merge: true });
+                        dispatch(setUser(newProfile));
+                        console.log("Registry Synchronized: New user profile initialized.");
                     }
                 });
 
