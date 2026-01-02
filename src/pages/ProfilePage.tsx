@@ -208,11 +208,11 @@ const ProfilePage = () => {
     };
 
     const handleCancelOrder = async (orderId: string) => {
-        if (!window.confirm("Are you sure you want to cancel this acquisition? This action cannot be undone.")) return;
+        if (!window.confirm("Are you sure you want to cancel this order? This action cannot be undone.")) return;
 
         try {
             await authService.cancelOrder(orderId);
-            toast.success('Acquisition Ejected');
+            toast.success('Order Cancelled');
         } catch (error) {
             toast.error('Cancellation Failed');
         }
@@ -687,7 +687,7 @@ const ProfilePage = () => {
                                                                         onClick={() => handleCancelOrder(order.id)}
                                                                         className="flex items-center gap-2 px-6 py-3 bg-red-50 text-red-600 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all active:scale-95"
                                                                     >
-                                                                        <XCircle className="w-3.5 h-3.5" /> Eject Unit
+                                                                        <XCircle className="w-3.5 h-3.5" /> Cancel Order
                                                                     </button>
                                                                 )}
                                                                 <button className="flex items-center gap-3 px-10 py-4 bg-white border border-gray-200 text-indigo-600 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:border-indigo-600 hover:bg-indigo-50/30 transition-all active:scale-95 shadow-sm">
