@@ -173,19 +173,41 @@ const Navbar = () => {
                     </div>
 
                     {/* Mobile Actions (Wishlist + Cart) */}
-                    <div className="flex md:hidden items-center justify-end gap-3 w-20">
-                        <Link to="/wishlist" className="relative text-gray-950 p-1">
-                            <Heart className="h-5.5 w-5.5" />
+                    {/* Mobile Actions (Account + Wishlist + Cart) */}
+                    <div className="flex md:hidden items-center justify-end gap-3 flex-1 min-w-0">
+                        {user ? (
+                            <Link to="/profile" className="flex flex-col items-center p-1">
+                                <div className="w-6 h-6 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 border border-indigo-100 shadow-sm overflow-hidden">
+                                    {user.photoURL ? (
+                                        <img src={user.photoURL} alt="" className="w-full h-full object-cover" />
+                                    ) : (
+                                        <User className="h-3.5 w-3.5" />
+                                    )}
+                                </div>
+                                <span className="text-[8px] font-black text-gray-900 uppercase tracking-tighter mt-1 leading-none">Me</span>
+                            </Link>
+                        ) : (
+                            <Link to="/login" className="flex flex-col items-center p-1 group">
+                                <User className="h-5 w-5 text-gray-950" />
+                                <span className="text-[8px] font-black text-gray-900 uppercase tracking-tighter mt-1 leading-none">Login</span>
+                            </Link>
+                        )}
+
+                        <Link to="/wishlist" className="relative flex flex-col items-center p-1">
+                            <Heart className="h-5 w-5 text-gray-950" />
+                            <span className="text-[8px] font-black text-gray-900 uppercase tracking-tighter mt-1 leading-none">Wish</span>
                             {wishlistCount > 0 && (
-                                <span className="absolute -top-0.5 -right-0.5 bg-pink-500 text-white text-[8px] min-w-[15px] h-[15px] flex items-center justify-center rounded-full font-black border-2 border-white shadow-sm">
+                                <span className="absolute top-0 right-0 bg-pink-500 text-white text-[7px] min-w-[13px] h-[13px] flex items-center justify-center rounded-full font-black border border-white">
                                     {wishlistCount}
                                 </span>
                             )}
                         </Link>
-                        <Link to="/cart" className="relative text-gray-950 p-1">
-                            <ShoppingCart className="h-5.5 w-5.5" />
+
+                        <Link to="/cart" className="relative flex flex-col items-center p-1">
+                            <ShoppingCart className="h-5 w-5 text-gray-950" />
+                            <span className="text-[8px] font-black text-gray-900 uppercase tracking-tighter mt-1 leading-none">Bag</span>
                             {cartCount > 0 && (
-                                <span className="absolute -top-0.5 -right-0.5 bg-indigo-600 text-white text-[8px] min-w-[15px] h-[15px] flex items-center justify-center rounded-full font-black border-2 border-white shadow-sm">
+                                <span className="absolute top-0 right-0 bg-indigo-600 text-white text-[7px] min-w-[13px] h-[13px] flex items-center justify-center rounded-full font-black border border-white">
                                     {cartCount}
                                 </span>
                             )}
