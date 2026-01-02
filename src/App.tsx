@@ -52,6 +52,7 @@ const AdminRoute = ({ children }: { children: React.ReactNode }) => {
 
 function App() {
     useEffect(() => {
+        console.log("BUYFLUX App Mounting...");
         const handleInstallPrompt = (e: any) => {
             e.preventDefault();
             (window as any).deferredPrompt = e;
