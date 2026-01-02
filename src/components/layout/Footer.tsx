@@ -4,18 +4,18 @@ import { motion } from 'framer-motion';
 
 const Footer = () => {
     const socials = [
-        { Icon: Linkedin, href: "https://www.linkedin.com/in/sandeep-damera", label: "LinkedIn", color: "hover:text-blue-400" },
+        { Icon: Linkedin, href: "https://www.linkedin.com/in/sandeep-damera596", label: "LinkedIn", color: "hover:text-blue-400" },
         { Icon: Briefcase, href: "https://www.naukri.com/mnj/v3/ms/login", label: "Naukri", color: "hover:text-blue-500" },
         { Icon: Github, href: "https://github.com/sandeep2k01", label: "GitHub", color: "hover:text-gray-400" },
         { Icon: Instagram, href: "https://www.instagram.com/sandeep_damera_/", label: "Instagram", color: "hover:text-pink-500" }
     ];
 
     const shopLinks = [
-        { label: "Men's Fashion", href: "/products/Men" },
-        { label: "Women's Collection", href: "/products/Women" },
-        { label: "Gadgets & Tech", href: "/products/Gadgets" },
-        { label: "Beauty & Skincare", href: "/products/Beauty & Skincare" },
-        { label: "Anime Merch", href: "/products/Anime" },
+        { label: "Men's Fashion", href: "/products/men" },
+        { label: "Women's Collection", href: "/products/women" },
+        { label: "Gadgets & Tech", href: "/products/gadgets" },
+        { label: "Beauty & Skincare", href: "/products/beauty & skincare" },
+        { label: "Anime Merch", href: "/products/anime" },
     ];
 
     return (
@@ -41,6 +41,8 @@ const Footer = () => {
                                 <motion.a
                                     key={i}
                                     href={social.href}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
                                     whileHover={{ y: -5 }}
                                     className={`w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 transition-all duration-300 ${social.color} hover:bg-white/10 hover:border-white/20`}
                                 >
@@ -56,7 +58,7 @@ const Footer = () => {
                         <ul className="space-y-4">
                             {shopLinks.map((link) => (
                                 <li key={link.label}>
-                                    <Link to={link.href} className="text-gray-400 hover:text-white transition-colors text-sm font-medium hover:translate-x-1 inline-block transform duration-200">
+                                    <Link to={link.href} className="text-gray-400 hover:text-white transition-colors text-sm font-medium hover:translate-x-1 inline-block transform duration-200 uppercase tracking-tighter">
                                         {link.label}
                                     </Link>
                                 </li>
@@ -74,7 +76,7 @@ const Footer = () => {
                             </div>
                             <div className="flex items-center gap-3 group text-gray-400">
                                 <Phone className="w-4 h-4 text-indigo-500" />
-                                <span className="text-xs font-medium">+91 1234567890</span>
+                                <span className="text-xs font-medium">+91 9121650364</span>
                             </div>
                             <div className="flex items-center gap-3 group text-gray-400">
                                 <MapPin className="w-4 h-4 text-indigo-500" />
