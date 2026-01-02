@@ -16,11 +16,12 @@ import {
     Map,
     Plus,
     Trash2,
-    Edit2,
     CheckCircle,
     Package,
     Zap,
-    Truck
+    Truck,
+    Heart,
+    ArrowRight
 } from 'lucide-react';
 import { doc, onSnapshot, collection, query, where, orderBy } from 'firebase/firestore';
 import { db } from '../config/firebase';
@@ -30,6 +31,7 @@ import { toast } from 'sonner';
 
 const ProfilePage = () => {
     const user = useAppSelector((state: any) => state.auth.user);
+    const { items: wishlistItems } = useAppSelector((state) => state.wishlist);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -220,6 +222,7 @@ const ProfilePage = () => {
                             {[
                                 { id: 'overview', label: 'Overview', icon: UserIcon },
                                 { id: 'orders', label: 'My Orders', icon: ShoppingBag },
+                                { id: 'wishlist', label: 'My Wishlist', icon: Heart },
                                 { id: 'profile', label: 'Profile Settings', icon: Settings },
                                 { id: 'addresses', label: 'Addresses', icon: MapPin },
                             ].map(item => (
@@ -229,7 +232,7 @@ const ProfilePage = () => {
                                     className={`flex items-center gap-3 px-4 py-2.5 text-sm font-medium rounded-lg transition-colors ${activeTab === item.id ? 'bg-indigo-50 text-indigo-600' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
                                         }`}
                                 >
-                                    <item.icon className="w-4 h-4" />
+                                    <item.icon className={`w-4 h-4 ${activeTab === item.id ? 'text-indigo-600' : 'text-gray-400'}`} />
                                     {item.label}
                                 </button>
                             ))}
@@ -251,10 +254,11 @@ const ProfilePage = () => {
                     <div className="lg:hidden sticky top-[64px] z-40 bg-white/80 backdrop-blur-md -mx-6 px-6 border-b border-gray-100 mb-8 pt-2">
                         <div className="flex items-center gap-6 overflow-x-auto no-scrollbar pb-4">
                             {[
-                                { id: 'overview', label: 'Overview', icon: UserIcon },
-                                { id: 'orders', label: 'My Orders', icon: ShoppingBag },
-                                { id: 'profile', label: 'Settings', icon: Settings },
-                                { id: 'addresses', label: 'Addresses', icon: MapPin },
+                                { id: 'overview', icon: UserIcon },
+                                { id: 'orders', icon: ShoppingBag },
+                                { id: 'wishlist', icon: Heart },
+                                { id: 'profile', icon: Settings },
+                                { id: 'addresses', icon: MapPin },
                             ].map(item => (
                                 <button
                                     key={item.id}
@@ -262,25 +266,15 @@ const ProfilePage = () => {
                                         setActiveTab(item.id);
                                         window.scrollTo({ top: 0, behavior: 'smooth' });
                                     }}
-                                    className={`flex items-center gap-2 whitespace-nowrap px-1 py-1 text-[11px] font-black uppercase tracking-widest transition-all relative ${activeTab === item.id ? 'text-indigo-600' : 'text-gray-400'
+                                    className={`flex items-center gap-2 whitespace-nowrap px-3 py-2 text-[10px] font-black uppercase tracking-widest transition-all rounded-full border ${activeTab === item.id
+                                        ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg'
+                                        : 'bg-white text-gray-400 border-gray-100'
                                         }`}
                                 >
                                     <item.icon className="w-3.5 h-3.5" />
-                                    {item.label}
-                                    {activeTab === item.id && (
-                                        <motion.div layoutId="activeTab" className="absolute -bottom-[17px] left-0 right-0 h-0.5 bg-indigo-600" />
-                                    )}
+                                    {item.id}
                                 </button>
                             ))}
-                            {user.email === 'sandeepdamera596@gmail.com' && (
-                                <button
-                                    onClick={() => navigate('/admin')}
-                                    className="flex items-center gap-2 whitespace-nowrap px-1 py-1 text-[11px] font-black uppercase tracking-widest text-indigo-500"
-                                >
-                                    <Package className="w-3.5 h-3.5" />
-                                    Admin
-                                </button>
-                            )}
                         </div>
                     </div>
 
@@ -512,6 +506,77 @@ const ProfilePage = () => {
                                             )}
                                         </AnimatePresence>
                                     </div>
+                                </motion.div>
+                            )}
+
+                            {activeTab === 'wishlist' && (
+                                <motion.div
+                                    initial={{ opacity: 0, x: 20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    className="space-y-12"
+                                >
+                                    {/* Wishlist Header */}
+                                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 pb-8 border-b border-gray-100">
+                                        <div>
+                                            <h2 className="text-3xl font-black text-gray-900 tracking-tighter uppercase italic">
+                                                Curated <span className="text-pink-600">Wishlist</span>
+                                            </h2>
+                                            <p className="text-xs text-gray-400 font-bold uppercase tracking-[0.2em] mt-2">Your private lookbook of excellence</p>
+                                        </div>
+                                        <div className="px-6 py-2 bg-pink-50 text-pink-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-pink-100">
+                                            {wishlistItems.length} Units Shortlisted
+                                        </div>
+                                    </div>
+
+                                    {wishlistItems.length > 0 ? (
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                                            {wishlistItems.map((item) => (
+                                                <div key={item.id} className="group relative bg-white border border-gray-100 rounded-[2.5rem] overflow-hidden hover:shadow-2xl hover:shadow-pink-100/50 transition-all duration-700">
+                                                    <div className="aspect-[4/5] overflow-hidden bg-gray-50 relative">
+                                                        <img
+                                                            src={item.image}
+                                                            alt={item.title}
+                                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
+                                                        />
+                                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                                                        <div className="absolute bottom-6 left-6 right-6 translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500">
+                                                            <Button
+                                                                className="w-full py-4 rounded-2xl bg-white text-black hover:bg-indigo-600 hover:text-white border-none text-[10px] font-black uppercase tracking-widest shadow-xl"
+                                                                onClick={() => navigate(`/product/${item.id}`)}
+                                                            >
+                                                                View Details <ArrowRight className="w-4 h-4 ml-2" />
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="p-8">
+                                                        <div className="flex justify-between items-start mb-4">
+                                                            <div>
+                                                                <h3 className="text-[10px] font-black uppercase tracking-widest text-indigo-600 mb-1">{item.brand}</h3>
+                                                                <h4 className="text-sm font-black text-gray-900 tracking-tight uppercase line-clamp-1 italic">{item.title}</h4>
+                                                            </div>
+                                                            <div className="flex flex-col items-end">
+                                                                <span className="text-lg font-black text-gray-900 tracking-tighter italic">₹{item.price.toLocaleString()}</span>
+                                                                {item.discountPercentage > 0 && (
+                                                                    <span className="text-[9px] font-black text-orange-500 uppercase tracking-tighter">-{item.discountPercentage}%</span>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className="py-32 text-center bg-pink-50/20 rounded-[4rem] border-2 border-dashed border-pink-100">
+                                            <div className="w-24 h-24 bg-white rounded-[2.5rem] shadow-xl flex items-center justify-center mx-auto mb-8 border border-pink-50">
+                                                <Heart className="w-10 h-10 text-pink-200" />
+                                            </div>
+                                            <h3 className="text-xl font-black text-gray-900 uppercase tracking-widest mb-2 italic">Lookbook Empty</h3>
+                                            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-[0.2em]">Shortlist units to build your digital style heritage.</p>
+                                            <Button onClick={() => navigate('/products')} className="mt-10 px-12 py-4 rounded-2xl bg-pink-600 border-none shadow-2xl shadow-pink-100">Explore Collection</Button>
+                                        </div>
+                                    )}
                                 </motion.div>
                             )}
 
