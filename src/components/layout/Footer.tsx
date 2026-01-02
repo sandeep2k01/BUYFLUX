@@ -5,9 +5,9 @@ import { motion } from 'framer-motion';
 const Footer = () => {
     const socials = [
         { Icon: Linkedin, href: "https://www.linkedin.com/in/sandeep-damera596", label: "LinkedIn", color: "hover:text-blue-400" },
-        { Icon: Briefcase, href: "https://www.naukri.com/mnj/v3/ms/login", label: "Naukri", color: "hover:text-blue-500" },
+        { Icon: Briefcase, href: "https://www.naukri.com/mnjuser/profile?id=&altresid", label: "Naukri", color: "hover:text-blue-500" },
         { Icon: Github, href: "https://github.com/sandeep2k01", label: "GitHub", color: "hover:text-gray-400" },
-        { Icon: Instagram, href: "https://www.instagram.com/sandeep_damera_/", label: "Instagram", color: "hover:text-pink-500" }
+        { Icon: Instagram, href: "https://www.instagram.com/sandeep_sandy_00/", label: "Instagram", color: "hover:text-pink-500" }
     ];
 
     const shopLinks = [
