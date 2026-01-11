@@ -21,7 +21,8 @@ const EditProductPage = () => {
         category: '',
         description: '',
         image: '',
-        discountPercentage: 0
+        discountPercentage: 0,
+        stock: 0
     });
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string>('');
@@ -101,6 +102,7 @@ const EditProductPage = () => {
                 ...formData,
                 price: Number(formData.price),
                 discountPercentage: Number(formData.discountPercentage),
+                stock: Number(formData.stock),
                 image: finalImageUrl
             });
             toast.success("Product updated!");
@@ -134,17 +136,8 @@ const EditProductPage = () => {
         );
     }
 
-    if (!formData.title && !loading) {
-        return (
-            <div className="min-h-screen flex items-center justify-center p-6 text-center">
-                <div>
-                    <h2 className="text-xl font-black mb-2 uppercase">Something went wrong</h2>
-                    <p className="text-sm text-gray-500 mb-6 font-medium">We couldn't load the product details. Please try again.</p>
-                    <Button onClick={() => navigate('/admin')}>Back to Dashboard</Button>
-                </div>
-            </div>
-        );
-    }
+    // If data is fetched but title is missing (should theoretically not happen with valid products)
+    // We allow title to be empty for the user to type, so we don't return error UI here.
 
     return (
         <div className="max-w-5xl mx-auto px-4 pt-4 pb-12">
@@ -209,7 +202,6 @@ const EditProductPage = () => {
                                         <option value="Gadgets">Gadgets</option>
                                         <option value="Anime">Anime</option>
                                         <option value="Food & Grocery">Food & Grocery</option>
-                                        <option value="Home Appliances">Home Appliances</option>
                                     </select>
                                 </div>
 
@@ -233,6 +225,17 @@ const EditProductPage = () => {
                                             value={formData.discountPercentage}
                                             onChange={handleChange}
                                             className="w-full px-4 py-3 rounded-xl border border-gray-100 bg-gray-50/30 focus:bg-white focus:border-indigo-600 focus:ring-4 focus:ring-indigo-600/5 outline-none transition-all font-black text-sm text-orange-600"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1.5">Inventory Stock*</label>
+                                        <input
+                                            type="number"
+                                            name="stock"
+                                            value={formData.stock}
+                                            onChange={handleChange}
+                                            required
+                                            className="w-full px-4 py-3 rounded-xl border border-gray-100 bg-gray-50/30 focus:bg-white focus:border-indigo-600 focus:ring-4 focus:ring-indigo-600/5 outline-none transition-all font-black text-sm text-indigo-600"
                                         />
                                     </div>
                                 </div>

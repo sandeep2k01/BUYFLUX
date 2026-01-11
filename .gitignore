@@ -40,3 +40,5 @@ ui-debug.log*
 errors.txt
 tsc_errors.txt
 file_list.txt
+.vercel
+.env*.local

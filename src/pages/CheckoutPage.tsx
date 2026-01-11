@@ -19,7 +19,7 @@ const CheckoutPage = () => {
     const [step, setStep] = useState(1); // 1: Address, 2: Order Summary, 3: Payment, 4: Success
     const [addresses, setAddresses] = useState<Address[]>([]);
     const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
-    const [paymentMethod, setPaymentMethod] = useState<'card' | 'upi' | 'cod'>('upi');
+    const [paymentMethod, setPaymentMethod] = useState<'razorpay' | 'cod'>('razorpay');
     const [loading, setLoading] = useState(false);
     const [orderId, setOrderId] = useState<string | null>(null);
 
@@ -65,7 +65,7 @@ const CheckoutPage = () => {
 
         if (user.emailVerified === false) {
             toast.error("Email Verification Required", {
-                description: "Please verify your email address before placing an order. Check your inbox for the link.",
+                description: "Please verify your email address before placing an order.",
                 duration: 5000
             });
             return;
@@ -73,38 +73,123 @@ const CheckoutPage = () => {
 
         setLoading(true);
         try {
-            const { Timestamp } = await import('firebase/firestore');
-            const orderData = {
-                userId: user.uid,
-                userEmail: user.email,
-                items: cartItems as OrderItem[],
-                totalAmount: total,
-                shippingAddress: selectedAddress,
-                status: 'pending' as const,
-                paymentMethod,
-                paymentStatus: paymentMethod === 'cod' ? 'pending' as const : 'completed' as const,
-                createdAt: new Date().toISOString(),
-                serverTimestamp: Timestamp.now()
+            if (paymentMethod === 'cod') {
+                const orderData = {
+                    userId: user.uid,
+                    userEmail: user.email,
+                    items: cartItems as OrderItem[],
+                    totalAmount: total,
+                    shippingAddress: selectedAddress,
+                    status: 'CREATED' as const,
+                    paymentMethod,
+                    paymentStatus: 'pending' as const
+                };
+                const id = await orderService.placeOrder(orderData);
+                await finalizeOrder(id);
+            } else {
+                // REAL FLOW: Step 1 & 2 - Create Order on Backend
+                const backendOrder = await orderService.createPaymentOrder({
+                    amount: total,
+                    items: cartItems,
+                    shippingAddress: selectedAddress
+                });
+
+                // Step 3: Open Razorpay with the Backend-generated Order ID
+                await initiateRazorpayPayment(backendOrder.orderId, backendOrder.razorpayOrderId, total);
+            }
+        } catch (error: any) {
+            console.error("Order process failed:", error);
+            toast.error("Order Failed", { description: error.message });
+            setLoading(false);
+        }
+    };
+
+    const initiateRazorpayPayment = async (dbOrderId: string, razorpayOrderId: string, amount: number) => {
+        try {
+            const { RAZORPAY_CONFIG } = await import('../config/razorpayConfig');
+
+            const options: any = {
+                key: RAZORPAY_CONFIG.KEY_ID,
+                amount: Math.round(amount * 100),
+                currency: RAZORPAY_CONFIG.CURRENCY,
+                name: "BUYFLUX Premium",
+                order_id: razorpayOrderId, // MANDATORY for real flow
+                description: `Portfolio Project Order ID: ${dbOrderId.slice(-6).toUpperCase()}`,
+                image: "https://firebasestorage.googleapis.com/v0/b/modern-ecommerce-6d7b4.appspot.com/o/logo.png?alt=media",
+                handler: async function (response: any) {
+                    setLoading(true);
+                    try {
+                        // REAL FLOW: Step 4 & 5 - Verify Payment on Backend
+                        await orderService.verifyPayment({
+                            orderId: dbOrderId,
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_signature: response.razorpay_signature
+                        });
+
+                        await finalizeOrder(dbOrderId);
+                    } catch (err: any) {
+                        console.error("Verification failed:", err);
+                        toast.error("Security Verification Failed", {
+                            description: "Your payment was charged but verification failed. Support has been notified."
+                        });
+                        setLoading(false);
+                    }
+                },
+                prefill: {
+                    name: selectedAddress?.name,
+                    email: user?.email,
+                    contact: selectedAddress?.mobile
+                },
+                theme: {
+                    color: RAZORPAY_CONFIG.THEME_COLOR
+                },
+                modal: {
+                    ondismiss: function () {
+                        setLoading(false);
+                        toast.dismiss();
+                        toast.error("Transaction aborted. Order preserved in PENDING state.");
+                    }
+                }
             };
 
-            const id = await orderService.placeOrder(orderData);
+            const Razorpay = (window as any).Razorpay;
+            if (!Razorpay) throw new Error("Razorpay SDK not loaded.");
 
+            const rzp = new Razorpay(options);
+
+            rzp.on('payment.failed', function (response: any) {
+                setLoading(false);
+                toast.error("Payment Failed", {
+                    description: response.error.description || "Verification failed."
+                });
+            });
+
+            rzp.open();
+        } catch (error: any) {
+            console.error("Razorpay Init Error:", error);
+            setLoading(false);
+            toast.error("Razorpay Error", { description: error.message });
+        }
+    };
+
+    const finalizeOrder = async (id: string) => {
+        try {
             // Trigger Email Notification
             const { notificationService } = await import('../services/notificationService');
             await notificationService.sendOrderEmail(
                 user.email,
                 id,
-                'Order Initialized',
+                'Order Confirmed',
                 `Acquisition Manifest #${id.slice(-6).toUpperCase()} is now active. Tracking synchronized with your account.`
             );
 
             setOrderId(id);
             dispatch(clearCart());
             setStep(4);
-            toast.success("Order Placed Successfully!");
-        } catch (error) {
-            console.error(error);
-            toast.error('Failed to place order');
+            toast.success("Order Synchronized Successfully!");
+        } catch (err) {
+            console.error("Finalization error:", err);
         } finally {
             setLoading(false);
         }
@@ -346,8 +431,7 @@ const CheckoutPage = () => {
                                     >
                                         <div className="space-y-4">
                                             {[
-                                                { id: 'upi', label: 'UPI (PhonePe, Google Pay)', desc: 'Pay instantly with your UPI apps' },
-                                                { id: 'card', label: 'Credit / Debit / ATM Card', desc: 'Securely use any major card network' },
+                                                { id: 'razorpay', label: 'Online Payment (Razorpay)', desc: 'Cards, UPI, Netbanking, Wallets' },
                                                 { id: 'cod', label: 'Cash on Delivery', desc: 'Pay when you receive the archive' }
                                             ].map((m) => (
                                                 <label

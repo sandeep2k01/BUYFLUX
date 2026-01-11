@@ -4,7 +4,7 @@ import { productService } from '../../services/productService';
 import Fuse from 'fuse.js';
 
 // Categories for the app - Final unified list
-const CATEGORIES = ['Men', 'Women', 'Kids', 'Beauty & Skincare', 'Food & Grocery', 'Gadgets', 'Anime', 'Home Appliances'];
+const CATEGORIES = ['Men', 'Women', 'Kids', 'Beauty & Skincare', 'Food & Grocery', 'Gadgets', 'Anime'];
 
 interface ProductState {
     items: Product[];
@@ -63,7 +63,6 @@ const applyFilters = (items: Product[], filters: ProductState['filters']) => {
         else if (/\b(food|grocery|groceries|snack|drink|organic|fruit|chocolate)\b/i.test(rawSearch)) queryCategory = 'Food & Grocery';
         else if (/\b(gadget|tech|electronic|smart|mobile|phone|watch|audio)\b/i.test(rawSearch)) queryCategory = 'Gadgets';
         else if (/\b(anime|naruto|manga|itachi|sasuke)\b/i.test(rawSearch)) queryCategory = 'Anime';
-        else if (/\b(home|appliance|kitchen|vacuum|fryer|bulb)\b/i.test(rawSearch)) queryCategory = 'Home Appliances';
     }
 
     const activeCategory = filters.category || queryCategory;
@@ -92,9 +91,6 @@ const applyFilters = (items: Product[], filters: ProductState['filters']) => {
             }
             if (cat === 'kids') {
                 return itemCat.includes('kids') || itemCat.includes('toy') || itemCat.includes('child') || itemCat.includes('baby');
-            }
-            if (cat === 'home appliances') {
-                return itemCat.includes('home') || itemCat.includes('appliance') || itemCat.includes('kitchen') || itemCat.includes('furnit');
             }
             if (cat === 'gadgets') {
                 return itemCat.includes('gadget') || itemCat.includes('phone') || itemCat.includes('laptop') || itemCat.includes('electronic');

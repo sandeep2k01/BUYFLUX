@@ -11,6 +11,7 @@ export interface Product {
     };
     brand?: string;
     discountPercentage?: number;
+    stock: number;
 }
 
 export interface CartItem extends Product {
@@ -61,10 +62,14 @@ export interface Order {
     items: OrderItem[];
     totalAmount: number;
     shippingAddress: Address;
-    status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
-    paymentMethod: 'card' | 'upi' | 'cod';
+    status: 'CREATED' | 'PAID' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
+    paymentMethod: 'card' | 'upi' | 'cod' | 'razorpay' | 'netbanking';
     paymentStatus: 'pending' | 'completed' | 'failed';
+    razorpayOrderId?: string;
+    razorpayPaymentId?: string;
+    razorpaySignature?: string;
     createdAt: string;
+    updatedAt?: string;
 }
 
 export interface OrderState {

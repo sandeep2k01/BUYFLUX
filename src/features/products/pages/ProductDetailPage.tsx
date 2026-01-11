@@ -310,6 +310,14 @@ const ProductDetailPage = () => {
                                     </span>
                                 )}
                             </div>
+                            <div className="flex items-center gap-3 mt-4">
+                                <div className={`px-4 py-1.5 rounded-xl border text-[9px] font-black uppercase tracking-widest ${product.stock > 0 ? 'bg-green-50 text-green-600 border-green-100' : 'bg-red-50 text-red-600 border-red-100'}`}>
+                                    {product.stock > 0 ? `Inventory: ${product.stock} Ready` : 'Inventory Depleted'}
+                                </div>
+                                {product.stock > 0 && product.stock < 10 && (
+                                    <span className="text-[9px] font-black text-orange-500 uppercase animate-pulse">Critical Low Stock</span>
+                                )}
+                            </div>
                             <p className="text-[10px] md:text-xs font-bold text-gray-400 mt-2 uppercase tracking-widest">Free delivery on orders above ₹499</p>
                         </motion.div>
 
@@ -356,15 +364,17 @@ const ProductDetailPage = () => {
                         >
                             <button
                                 onClick={handleAddToCart}
-                                className="flex-1 bg-gray-900 text-white h-20 rounded-3xl font-black text-sm uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:bg-black transition-all shadow-2xl active:scale-[0.98]"
+                                disabled={product.stock === 0}
+                                className="flex-1 bg-gray-900 text-white h-20 rounded-3xl font-black text-sm uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:bg-black transition-all shadow-2xl active:scale-[0.98] disabled:opacity-50 disabled:grayscale disabled:pointer-events-none"
                             >
-                                <ShoppingBag className="w-5 h-5" /> Add to Bag
+                                <ShoppingBag className="w-5 h-5" /> {product.stock === 0 ? 'Out of Stock' : 'Add to Bag'}
                             </button>
                             <button
                                 onClick={handleBuyNow}
-                                className="flex-1 bg-indigo-600 text-white h-20 rounded-3xl font-black text-sm uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:bg-indigo-700 transition-all shadow-2xl shadow-indigo-100 active:scale-[0.98]"
+                                disabled={product.stock === 0}
+                                className="flex-1 bg-indigo-600 text-white h-20 rounded-3xl font-black text-sm uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:bg-indigo-700 transition-all shadow-2xl shadow-indigo-100 active:scale-[0.98] disabled:opacity-50 disabled:grayscale disabled:pointer-events-none"
                             >
-                                <Zap className="w-5 h-5 fill-current" /> Buy Now
+                                <Zap className="w-5 h-5 fill-current" /> {product.stock === 0 ? 'Notify Me' : 'Buy Now'}
                             </button>
                         </motion.div>
 
@@ -516,15 +526,17 @@ const ProductDetailPage = () => {
             <div className="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-gray-100 p-3 flex gap-3 z-[60] shadow-[0_-10px_30px_rgba(0,0,0,0.05)]">
                 <button
                     onClick={handleAddToCart}
-                    className="flex-1 bg-white border-2 border-gray-900 text-gray-900 h-14 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all"
+                    disabled={product.stock === 0}
+                    className="flex-1 bg-white border-2 border-gray-900 text-gray-900 h-14 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all disabled:opacity-50 disabled:grayscale"
                 >
-                    <ShoppingBag className="w-4 h-4" /> Add to Bag
+                    <ShoppingBag className="w-4 h-4" /> {product.stock === 0 ? 'Out' : 'Add to Bag'}
                 </button>
                 <button
                     onClick={handleBuyNow}
-                    className="flex-1 bg-gray-900 text-white h-14 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all"
+                    disabled={product.stock === 0}
+                    className="flex-1 bg-gray-900 text-white h-14 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all disabled:opacity-50 disabled:grayscale"
                 >
-                    <Zap className="w-4 h-4 fill-current" /> Buy Now
+                    <Zap className="w-4 h-4 fill-current" /> {product.stock === 0 ? 'Waitlist' : 'Buy Now'}
                 </button>
             </div>
         </div>

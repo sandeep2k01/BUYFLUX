@@ -61,6 +61,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                         className="w-full h-full object-cover transition-all duration-700"
                     />
 
+                    {/* Sold Out Overlay */}
+                    {(product.stock ?? 20) === 0 && (
+                        <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] z-10 flex items-center justify-center p-4">
+                            <span className="bg-red-600 text-white px-3 py-1.5 md:px-5 md:py-2.5 rounded-xl text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] shadow-xl rotate-[-2deg]">
+                                Archive Depleted
+                            </span>
+                        </div>
+                    )}
+
                     {/* Wishlist Button */}
                     <button
                         onClick={handleToggleWishlist}
@@ -93,22 +102,30 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                             )}
                         </div>
 
-                        {product.discountPercentage && (
-                            <div className="bg-indigo-50 inline-block px-1.5 py-0.5 md:px-2 md:py-0.5 rounded-md">
-                                <span className="text-[7px] md:text-[8px] font-black text-indigo-600 uppercase tracking-tighter">
-                                    {product.discountPercentage}% Optimization
+                        <div className="flex items-center gap-2">
+                            {product.discountPercentage && (
+                                <div className="bg-indigo-50 inline-block px-1.5 py-0.5 md:px-2 md:py-0.5 rounded-md">
+                                    <span className="text-[7px] md:text-[8px] font-black text-indigo-600 uppercase tracking-tighter">
+                                        {product.discountPercentage}% OFF
+                                    </span>
+                                </div>
+                            )}
+                            {(product.stock ?? 20) > 0 && (product.stock ?? 20) < 15 && (
+                                <span className="text-[7px] md:text-[8px] font-black text-orange-500 uppercase tracking-tighter animate-pulse">
+                                    {product.stock ?? 20} Left
                                 </span>
-                            </div>
-                        )}
+                            )}
+                        </div>
                     </div>
 
-                    {/* Moved Quick Add to Bottom */}
+                    {/* Quick Add Button */}
                     <button
                         onClick={handleAddToCart}
-                        className="w-full bg-gray-950 text-white text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] py-2 md:py-3.5 rounded-xl hover:bg-indigo-600 active:scale-95 transition-all flex items-center justify-center gap-2 group/btn"
+                        disabled={(product.stock ?? 20) === 0}
+                        className="w-full bg-gray-950 text-white text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] py-2 md:py-3.5 rounded-xl hover:bg-indigo-600 active:scale-95 transition-all flex items-center justify-center gap-2 group/btn disabled:opacity-50 disabled:grayscale disabled:pointer-events-none"
                     >
                         <ShoppingBag className="w-3 md:w-4 h-3 md:h-4 group-hover/btn:rotate-12 transition-transform" />
-                        <span>Add to Bag</span>
+                        <span>{(product.stock ?? 20) === 0 ? 'Waitlist' : 'Add to Bag'}</span>
                     </button>
                 </div>
             </Link>

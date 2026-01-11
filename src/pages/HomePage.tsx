@@ -29,7 +29,6 @@ const HomePage = () => {
             if (cat === 'beauty') return itemCat.includes('beauty') || itemCat.includes('skin') || itemCat.includes('fragrance') || itemCat.includes('cosmetic') || itemCat === 'fragrances';
             if (cat === 'food') return itemCat.includes('food') || itemCat.includes('groc') || itemCat.includes('drink') || itemCat.includes('snack') || itemCat === 'groceries';
             if (cat === 'anime') return itemCat.includes('anime');
-            if (cat === 'appliances') return itemCat.includes('home') || itemCat.includes('appliance') || itemCat.includes('kitchen');
             if (cat === 'gadgets') return itemCat.includes('gadget') || itemCat.includes('phone') || itemCat.includes('electronic');
 
             return itemCat.includes(cat);

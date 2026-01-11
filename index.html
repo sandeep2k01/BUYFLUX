@@ -13,13 +13,16 @@
   <meta name="theme-color" content="#4f46e5" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>BUYFLUX | Modern E-commerce</title>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
 
 <script>
-  // CRITICAL: Unregister old service workers that might be causing blank pages on mobile
+  // Register Service Worker for PWA
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.getRegistrations().then(function (registrations) {
-      for (let registration of registrations) { registration.unregister(); }
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/service-worker.js')
+        .then(reg => console.log('BUYFLUX Service Worker active:', reg.scope))
+        .catch(err => console.error('Service Worker failure:', err));
     });
   }
 </script>

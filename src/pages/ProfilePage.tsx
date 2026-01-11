@@ -467,17 +467,50 @@ const ProfilePage = () => {
                                                             </div>
                                                         </div>
                                                         <div className="flex items-center gap-4">
-                                                            <div className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border ${order.status === 'delivered' ? 'bg-green-50 text-green-600 border-green-100' :
-                                                                order.status === 'processing' ? 'bg-blue-50 text-blue-600 border-blue-100' :
-                                                                    order.status === 'cancelled' ? 'bg-red-50 text-red-600 border-red-100' :
-                                                                        'bg-orange-50 text-orange-600 border-orange-100'
-                                                                }`}>
-                                                                {order.status}
+                                                            <div className="flex flex-col items-end">
+                                                                <div className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border mb-1 ${order.status === 'DELIVERED' ? 'bg-green-50 text-green-600 border-green-100' :
+                                                                        order.status === 'PAID' ? 'bg-indigo-50 text-indigo-600 border-indigo-100' :
+                                                                            order.status === 'SHIPPED' ? 'bg-blue-50 text-blue-600 border-blue-100' :
+                                                                                order.status === 'CANCELLED' ? 'bg-red-50 text-red-600 border-red-100' :
+                                                                                    'bg-orange-50 text-orange-600 border-orange-100'
+                                                                    }`}>
+                                                                    {order.status}
+                                                                </div>
+                                                                <div className={`text-[8px] font-black uppercase tracking-tighter ${order.paymentStatus === 'completed' ? 'text-green-500' : 'text-orange-500 animate-pulse'}`}>
+                                                                    Payment: {order.paymentStatus}
+                                                                </div>
                                                             </div>
                                                             <div className="text-lg font-black text-gray-950 italic">₹{order.totalAmount.toLocaleString()}</div>
                                                         </div>
                                                     </div>
-                                                    <div className="p-8">
+
+                                                    {/* Real-time Order Progress Tracker */}
+                                                    <div className="px-8 pt-8 flex items-center justify-between">
+                                                        {['CREATED', 'PAID', 'SHIPPED', 'DELIVERED'].map((step, idx) => {
+                                                            const statuses = ['CREATED', 'PAID', 'SHIPPED', 'DELIVERED'];
+                                                            const currentIndex = statuses.indexOf(order.status);
+                                                            const stepIndex = statuses.indexOf(step);
+                                                            const isDone = stepIndex <= currentIndex && order.status !== 'CANCELLED';
+
+                                                            return (
+                                                                <div key={step} className="flex-1 flex items-center group">
+                                                                    <div className="flex flex-col items-center gap-2 relative">
+                                                                        <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all ${isDone ? 'bg-indigo-600 border-indigo-600' : 'bg-white border-gray-100'}`}>
+                                                                            {isDone && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
+                                                                        </div>
+                                                                        <span className={`text-[8px] font-black uppercase tracking-widest absolute -bottom-6 whitespace-nowrap ${isDone ? 'text-indigo-600' : 'text-gray-300'}`}>
+                                                                            {step}
+                                                                        </span>
+                                                                    </div>
+                                                                    {idx < 3 && (
+                                                                        <div className={`flex-1 h-[2px] mx-2 transition-all ${stepIndex < currentIndex && order.status !== 'CANCELLED' ? 'bg-indigo-600' : 'bg-gray-100'}`} />
+                                                                    )}
+                                                                </div>
+                                                            );
+                                                        })}
+                                                    </div>
+
+                                                    <div className="p-8 mt-4">
                                                         <div className="flex overflow-x-auto gap-4 scrollbar-hide mb-8">
                                                             {order.items.map((item, idx) => (
                                                                 <div key={idx} className="flex-shrink-0 flex items-center gap-3 p-3 bg-gray-50 rounded-2xl border border-gray-100 min-w-[200px]">
@@ -490,7 +523,15 @@ const ProfilePage = () => {
                                                             ))}
                                                         </div>
                                                         <div className="flex justify-end gap-3">
-                                                            {order.status !== 'cancelled' && order.status !== 'delivered' && (
+                                                            {order.paymentStatus === 'pending' && order.status !== 'CANCELLED' && (
+                                                                <button
+                                                                    onClick={() => navigate('/checkout')}
+                                                                    className="px-6 py-3 bg-orange-500 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-orange-100 animate-bounce"
+                                                                >
+                                                                    Complete Payment
+                                                                </button>
+                                                            )}
+                                                            {order.status !== 'CANCELLED' && order.status !== 'DELIVERED' && (
                                                                 <button
                                                                     onClick={() => handleCancelOrder(order.id)}
                                                                     className="px-6 py-3 text-red-500 hover:bg-red-50 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
@@ -499,7 +540,7 @@ const ProfilePage = () => {
                                                                 </button>
                                                             )}
                                                             <button className="px-8 py-3 bg-gray-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl active:scale-95">
-                                                                Details
+                                                                Manifest Info
                                                             </button>
                                                         </div>
                                                     </div>

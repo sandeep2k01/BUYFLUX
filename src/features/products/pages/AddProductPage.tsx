@@ -18,7 +18,8 @@ const AddProductPage = () => {
         category: 'Men',
         description: '',
         discountPercentage: '',
-        imageUrl: ''
+        imageUrl: '',
+        stock: '20'
     });
     const [uploadMode, setUploadMode] = useState<'library' | 'url'>('library');
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -76,7 +77,8 @@ const AddProductPage = () => {
                     rate: parseFloat((Math.random() * 2 + 3).toFixed(1)),
                     count: Math.floor(Math.random() * 200) + 50
                 },
-                discountPercentage: formData.discountPercentage ? parseFloat(formData.discountPercentage) : undefined
+                discountPercentage: formData.discountPercentage ? parseFloat(formData.discountPercentage) : undefined,
+                stock: parseInt(formData.stock) || 0
             });
 
             toast.success("Product published live to Store!");
@@ -239,7 +241,6 @@ const AddProductPage = () => {
                                     <option value="Gadgets">Gadgets</option>
                                     <option value="Anime">Anime</option>
                                     <option value="Food & Grocery">Food & Grocery</option>
-                                    <option value="Home Appliances">Home Appliances</option>
                                 </select>
                             </div>
                         </div>
@@ -264,6 +265,17 @@ const AddProductPage = () => {
                                     placeholder="20"
                                     value={formData.discountPercentage}
                                     onChange={(e) => setFormData({ ...formData, discountPercentage: e.target.value })}
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-bold text-gray-700 mb-2">Initial Stock Units*</label>
+                                <input
+                                    type="number"
+                                    required
+                                    className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-600 focus:bg-white outline-none transition-all font-black text-indigo-600"
+                                    placeholder="50"
+                                    value={formData.stock}
+                                    onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
                                 />
                             </div>
                         </div>
